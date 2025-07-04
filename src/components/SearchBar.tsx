@@ -71,10 +71,10 @@ export function SearchBar() {
     if (error) {
       toast({ variant: 'destructive', title: 'Error', description: error })
       setError(error)
-      setRecommendations([])
+      setRecommendations([], '')
       setAnalysis(null)
     } else if (data) {
-      setRecommendations(data.movies)
+      setRecommendations(data.movies, searchQuery)
       setAnalysis(data.analysis)
     }
     setLoading(false)

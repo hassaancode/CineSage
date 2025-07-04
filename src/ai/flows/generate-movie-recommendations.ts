@@ -17,6 +17,7 @@ const GenerateMovieRecommendationsInputSchema = z.object({
   userInput: z
     .string()
     .describe('The user input describing the type of movie they want to watch.'),
+  exclude: z.array(z.string()).optional().describe('A list of movie titles to exclude from the recommendations.'),
 });
 export type GenerateMovieRecommendationsInput = z.infer<
   typeof GenerateMovieRecommendationsInputSchema
@@ -42,6 +43,13 @@ const prompt = ai.definePrompt({
   input: {schema: GenerateMovieRecommendationsInputSchema},
   output: {schema: GenerateMovieRecommendationsOutputSchema},
   prompt: `You are a movie expert. Based on the user input, recommend at least 10 movies.
+{{#if exclude}}
+
+Do not include any of the following movies in your new recommendations:
+{{#each exclude}}
+- {{{this}}}
+{{/each}}
+{{/if}}
 
 User Input: {{{userInput}}}
 

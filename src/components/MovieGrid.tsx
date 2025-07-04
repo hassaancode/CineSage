@@ -6,9 +6,11 @@ import { MovieCard } from '@/components/MovieCard'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AnalyzedClues } from './AnalyzedClues'
-import { Wand2, Film } from 'lucide-react'
+import { Wand2, Film, Loader2 } from 'lucide-react'
 import { getGenreMap } from '@/lib/tmdb'
+import { getMoreAIRecommendations } from '@/app/actions'
 import { Button } from '@/components/ui/button'
+import { useToast } from '@/hooks/use-toast'
 
 function WelcomeMessage() {
     return (
@@ -41,15 +43,18 @@ function NoResultsMessage() {
 export function MovieGrid() {
   const { 
     recommendations, 
-    loading, 
+    loading,
+    loadingMore,
+    setLoadingMore,
+    appendRecommendations,
     error,
+    userInput,
     sortBy,
     activeGenreFilters,
     genreMap,
     setGenreMap,
-    displayedCount,
-    loadMore,
    } = useMovieStore()
+   const { toast } = useToast()
 
   useEffect(() => {
     if (recommendations.length > 0 && genreMap.size === 0) {
@@ -84,11 +89,19 @@ export function MovieGrid() {
 
     return movies;
   }, [recommendations, sortBy, activeGenreFilters])
-  
-  const moviesToShow = useMemo(() => {
-    return filteredAndSortedMovies.slice(0, displayedCount);
-  }, [filteredAndSortedMovies, displayedCount])
 
+  const handleLoadMore = async () => {
+    setLoadingMore(true)
+    const { data, error } = await getMoreAIRecommendations(userInput, recommendations)
+    if (error) {
+        toast({ variant: 'destructive', title: 'Error', description: error })
+    } else if (data?.movies && data.movies.length > 0) {
+        appendRecommendations(data.movies)
+    } else {
+        toast({ title: 'All set!', description: "You've reached the end of the recommendations." })
+    }
+    setLoadingMore(false)
+  }
 
   if (loading) {
     return (
@@ -127,13 +140,22 @@ export function MovieGrid() {
     <>
       <AnalyzedClues />
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 animate-in fade-in-0 duration-500">
-        {moviesToShow.map((movie) => (
+        {filteredAndSortedMovies.map((movie) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
       </div>
-      {displayedCount < filteredAndSortedMovies.length && (
+      {recommendations.length > 0 && (
         <div className="mt-10 text-center">
-            <Button onClick={loadMore} size="lg">Load More</Button>
+            <Button onClick={handleLoadMore} size="lg" disabled={loadingMore}>
+              {loadingMore ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                'Load More'
+              )}
+            </Button>
         </div>
       )}
     </>
