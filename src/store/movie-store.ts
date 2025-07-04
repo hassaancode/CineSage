@@ -50,7 +50,7 @@ export const useMovieStore = create<MovieState>((set) => ({
   setAutocomplete: (movies) => set({ autocomplete: movies }),
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
-  setSortBy: (sortBy) => set({ sortBy }),
+  setSortBy: (sortBy) => set({ sortBy, displayedCount: 10 }),
   toggleGenreFilter: (genreId) => set((state) => {
     const activeGenreFilters = new Set(state.activeGenreFilters);
     if (activeGenreFilters.has(genreId)) {
@@ -58,10 +58,10 @@ export const useMovieStore = create<MovieState>((set) => ({
     } else {
       activeGenreFilters.add(genreId);
     }
-    return { activeGenreFilters: Array.from(activeGenreFilters) };
+    return { activeGenreFilters: Array.from(activeGenreFilters), displayedCount: 10 };
   }),
   setGenreMap: (genreMap) => set({ genreMap }),
-  clearFilters: () => set({ activeGenreFilters: [], sortBy: 'popularity' }),
+  clearFilters: () => set({ activeGenreFilters: [], sortBy: 'popularity', displayedCount: 10 }),
   clearState: () => set(initialState),
   loadMore: () => set((state) => ({ displayedCount: state.displayedCount + 10 })),
 }))
