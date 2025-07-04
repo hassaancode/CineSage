@@ -42,7 +42,7 @@ export function MovieCard({ movie }: { movie: Movie }) {
           <CardDescription className="line-clamp-3 text-sm text-muted-foreground">{movie.overview}</CardDescription>
         </CardContent>
       </Card>
-      {isDialogOpen && <MovieDetailsDialog movie={movie} open={isDialogOpen} onOpenChange={setIsDialogOpen} />}
+      <MovieDetailsDialog movie={movie} open={isDialogOpen} onOpenChange={setIsDialogOpen} />
     </>
   )
 }
