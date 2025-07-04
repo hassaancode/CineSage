@@ -8,6 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AnalyzedClues } from './AnalyzedClues'
 import { Wand2, Film } from 'lucide-react'
 import { getGenreMap } from '@/lib/tmdb'
+import { Button } from '@/components/ui/button'
 
 function WelcomeMessage() {
     return (
@@ -45,7 +46,9 @@ export function MovieGrid() {
     sortBy,
     activeGenreFilters,
     genreMap,
-    setGenreMap
+    setGenreMap,
+    displayedCount,
+    loadMore,
    } = useMovieStore()
 
   useEffect(() => {
@@ -54,7 +57,7 @@ export function MovieGrid() {
     }
   }, [recommendations, genreMap, setGenreMap])
 
-  const displayedMovies = useMemo(() => {
+  const filteredAndSortedMovies = useMemo(() => {
     let movies = [...recommendations];
 
     if (activeGenreFilters.length > 0) {
@@ -81,6 +84,10 @@ export function MovieGrid() {
 
     return movies;
   }, [recommendations, sortBy, activeGenreFilters])
+  
+  const moviesToShow = useMemo(() => {
+    return filteredAndSortedMovies.slice(0, displayedCount);
+  }, [filteredAndSortedMovies, displayedCount])
 
 
   if (loading) {
@@ -112,7 +119,7 @@ export function MovieGrid() {
     return <WelcomeMessage />;
   }
 
-  if (displayedMovies.length === 0) {
+  if (filteredAndSortedMovies.length === 0) {
     return <NoResultsMessage />;
   }
 
@@ -120,10 +127,15 @@ export function MovieGrid() {
     <>
       <AnalyzedClues />
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 animate-in fade-in-0 duration-500">
-        {displayedMovies.map((movie) => (
+        {moviesToShow.map((movie) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
       </div>
+      {displayedCount < filteredAndSortedMovies.length && (
+        <div className="mt-10 text-center">
+            <Button onClick={loadMore} size="lg">Load More</Button>
+        </div>
+      )}
     </>
   )
 }

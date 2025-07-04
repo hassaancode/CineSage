@@ -12,6 +12,7 @@ type MovieState = {
   sortBy: SortByType
   activeGenreFilters: number[]
   genreMap: Map<number, string>
+  displayedCount: number
   setRecommendations: (movies: Movie[]) => void
   setAnalysis: (analysis: AnalyzedUserInput | null) => void
   setAutocomplete: (movies: Movie[]) => void
@@ -22,6 +23,7 @@ type MovieState = {
   setGenreMap: (genreMap: Map<number, string>) => void
   clearFilters: () => void
   clearState: () => void
+  loadMore: () => void
 }
 
 const initialState = {
@@ -33,6 +35,7 @@ const initialState = {
   sortBy: 'popularity' as SortByType,
   activeGenreFilters: [] as number[],
   genreMap: new Map<number, string>(),
+  displayedCount: 10,
 }
 
 export const useMovieStore = create<MovieState>((set) => ({
@@ -40,7 +43,8 @@ export const useMovieStore = create<MovieState>((set) => ({
   setRecommendations: (movies) => set({ 
     recommendations: movies, 
     activeGenreFilters: [], 
-    sortBy: 'popularity' 
+    sortBy: 'popularity',
+    displayedCount: 10,
   }),
   setAnalysis: (analysis) => set({ analysis: analysis }),
   setAutocomplete: (movies) => set({ autocomplete: movies }),
@@ -59,4 +63,5 @@ export const useMovieStore = create<MovieState>((set) => ({
   setGenreMap: (genreMap) => set({ genreMap }),
   clearFilters: () => set({ activeGenreFilters: [], sortBy: 'popularity' }),
   clearState: () => set(initialState),
+  loadMore: () => set((state) => ({ displayedCount: state.displayedCount + 10 })),
 }))
