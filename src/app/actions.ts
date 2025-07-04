@@ -35,13 +35,22 @@ export async function getAIRecommendations(
       (movie): movie is Movie => movie !== null
     )
 
-    if (movieDetails.length === 0) {
+    // Deduplicate movies by ID to prevent key errors
+    const uniqueMoviesMap = new Map<number, Movie>()
+    for (const movie of movieDetails) {
+      if (!uniqueMoviesMap.has(movie.id)) {
+        uniqueMoviesMap.set(movie.id, movie)
+      }
+    }
+    const uniqueMovieDetails = Array.from(uniqueMoviesMap.values())
+
+    if (uniqueMovieDetails.length === 0) {
       return { error: "AI recommendations found, but couldn't find them on TMDB. Please try a more specific query."}
     }
 
     return {
       data: {
-        movies: movieDetails,
+        movies: uniqueMovieDetails,
         analysis: analysisResult,
       },
     }
