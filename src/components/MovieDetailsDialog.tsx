@@ -41,12 +41,12 @@ export function MovieDetailsDialog({ movie, open, onOpenChange }: { movie: Movie
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl w-full p-0 overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-3">
-          <div className="relative h-full min-h-[450px] md:min-h-0 md:aspect-[2/3]">
+          <div className="relative w-full aspect-[2/3]">
            <Image
             src={getImageUrl(movie.poster_path)}
             alt={`Poster for ${movie.title}`}
             fill
-            className="object-cover"
+            className="object-cover rounded-t-lg md:rounded-tr-none md:rounded-bl-lg"
             data-ai-hint="movie poster"
           />
           </div>
