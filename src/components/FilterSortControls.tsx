@@ -45,12 +45,12 @@ export function FilterSortControls() {
   }
 
   return (
-    <div className="my-8 flex flex-col sm:flex-row gap-4 justify-between items-center animate-in fade-in-0 duration-500">
-      <div className="flex items-center gap-4">
+    <div className="my-8 flex flex-col sm:flex-row gap-4 w-full sm:justify-between items-center animate-in fade-in-0 duration-500">
+      <div className="flex items-center gap-2 w-full sm:w-auto">
         {availableGenres.length > 0 && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
+              <Button variant="outline" className="flex-1 sm:flex-initial">
                 <ListFilter className="mr-2 h-4 w-4" />
                 Filter Genres
                 {activeGenreFilters.length > 0 && (
@@ -85,10 +85,10 @@ export function FilterSortControls() {
         )}
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 w-full sm:w-auto">
         <span className="text-sm text-muted-foreground">Sort by:</span>
         <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="flex-1 sm:w-[180px]">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
