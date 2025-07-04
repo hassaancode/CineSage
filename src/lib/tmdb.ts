@@ -58,3 +58,44 @@ export async function getMovieVideos(movieId: number): Promise<Video[]> {
     return [];
   }
 }
+
+interface Genre {
+  id: number;
+  name: string;
+}
+
+interface GenresResponse {
+  genres: Genre[];
+}
+
+let genreMapCache: Map<number, string> | null = null;
+
+export async function getGenreMap(): Promise<Map<number, string>> {
+  if (genreMapCache) {
+    return genreMapCache;
+  }
+
+  if (!TMDB_API_KEY) {
+    console.error('TMDB API key is not configured.');
+    return new Map();
+  }
+
+  const url = `${TMDB_BASE_URL}/genre/movie/list?api_key=${TMDB_API_KEY}&language=en-US`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.error('Failed to fetch genres from TMDB:', response.statusText);
+      return new Map();
+    }
+    const data: GenresResponse = await response.json();
+    const genreMap = new Map<number, string>();
+    data.genres.forEach(genre => {
+      genreMap.set(genre.id, genre.name);
+    });
+    genreMapCache = genreMap;
+    return genreMap;
+  } catch (error) {
+    console.error('Error fetching genres from TMDB:', error);
+    return new Map();
+  }
+}
