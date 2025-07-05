@@ -46,7 +46,7 @@ export function MovieDetailsDialog({ movie, open, onOpenChange }: { movie: Movie
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl w-full p-0 overflow-hidden">
+      <DialogContent className="max-w-4xl w-full p-0 max-h-[90vh] overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-3">
           <div className="relative w-full aspect-[2/3]">
            <Image
@@ -57,7 +57,7 @@ export function MovieDetailsDialog({ movie, open, onOpenChange }: { movie: Movie
             data-ai-hint="movie poster"
           />
           </div>
-          <div className="md:col-span-2 p-6 max-h-[90vh] overflow-y-auto">
+          <div className="md:col-span-2 p-6">
               <DialogHeader className="text-left mb-4">
                 <DialogTitle className="text-3xl font-headline mb-2">{movie.title}</DialogTitle>
                 <div className="flex items-center text-sm text-muted-foreground gap-4 flex-wrap">
