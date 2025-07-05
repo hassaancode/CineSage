@@ -101,7 +101,7 @@ export function FilterSortControls() {
           </SelectContent>
         </Select>
         
-        <Select value={sortBy} onValuechange={(value) => setSortBy(value as any)}>
+        <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
           <SelectTrigger className="w-full sm:w-[160px]">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>

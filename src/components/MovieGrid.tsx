@@ -90,7 +90,7 @@ export function MovieGrid() {
               movies.sort((a, b) => {
                 const dateA = a.release_date ? new Date(a.release_date).getTime() : 0;
                 const dateB = b.release_date ? new Date(b.release_date).getTime() : 0;
-                return dateB - a;
+                return dateB - dateA;
               });
               break;
       }
