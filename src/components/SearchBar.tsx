@@ -75,7 +75,9 @@ export function SearchBar() {
       setAnalysis(null)
     } else if (data) {
       setRecommendations(data.movies, searchQuery)
-      setAnalysis(data.analysis)
+      if (data.analysis !== null && data.analysis !== undefined) {
+ setAnalysis(data.analysis)
+      }
     }
     setLoading(false)
   }
