@@ -13,6 +13,8 @@ import { getMovieVideos } from '@/lib/tmdb'
 import { Star } from 'lucide-react'
 import Image from 'next/image'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useMovieStore } from '@/store/movie-store'
+import { Badge } from '@/components/ui/badge'
 
 const getImageUrl = (path: string | null) => {
   return path ? `https://image.tmdb.org/t/p/w500${path}` : 'https://placehold.co/500x750'
@@ -21,6 +23,11 @@ const getImageUrl = (path: string | null) => {
 export function MovieDetailsDialog({ movie, open, onOpenChange }: { movie: Movie; open: boolean; onOpenChange: (open: boolean) => void }) {
   const [trailer, setTrailer] = useState<Video | null>(null)
   const [loading, setLoading] = useState(true)
+  const genreMap = useMovieStore((state) => state.genreMap)
+
+  const movieGenres = movie.genre_ids
+    .map(id => genreMap.get(id))
+    .filter((name): name is string => !!name);
 
   useEffect(() => {
     if (open) {
@@ -50,10 +57,10 @@ export function MovieDetailsDialog({ movie, open, onOpenChange }: { movie: Movie
             data-ai-hint="movie poster"
           />
           </div>
-          <div className="md:col-span-2 p-6 flex flex-col max-h-[90vh] overflow-y-auto">
+          <div className="md:col-span-2 p-6 max-h-[90vh] overflow-y-auto">
               <DialogHeader className="text-left mb-4">
                 <DialogTitle className="text-3xl font-headline mb-2">{movie.title}</DialogTitle>
-                <div className="flex items-center text-sm text-muted-foreground gap-4">
+                <div className="flex items-center text-sm text-muted-foreground gap-4 flex-wrap">
                     <div className="flex items-center">
                         <Star className="w-4 h-4 mr-1.5 fill-yellow-400 text-yellow-400" />
                         <span>{movie.vote_average > 0 ? movie.vote_average.toFixed(1) : 'N/A'}</span>
@@ -62,9 +69,17 @@ export function MovieDetailsDialog({ movie, open, onOpenChange }: { movie: Movie
                 </div>
               </DialogHeader>
 
+            {movieGenres.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-6">
+                {movieGenres.map((genre) => (
+                  <Badge key={genre} variant="secondary">{genre}</Badge>
+                ))}
+              </div>
+            )}
+            
             <DialogDescription className="text-base text-foreground/80 mb-6">{movie.overview}</DialogDescription>
             
-            <div className="mt-auto">
+            <div>
                 <h3 className="text-lg font-headline mb-3">Trailer</h3>
                 {loading ? (
                     <Skeleton className="aspect-video w-full rounded-lg" />
