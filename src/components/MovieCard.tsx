@@ -23,7 +23,7 @@ export function MovieCard({ movie: media }: { movie: Media }) {
       scale: 1,
       transition: {
         duration: 0.4,
-        ease: 'easeOut',
+        ease: [0.39, 0.24, 0.3, 1],
       },
     },
   }
