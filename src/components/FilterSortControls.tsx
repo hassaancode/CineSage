@@ -29,7 +29,6 @@ import {
   CalendarDays,
   ArrowDownUp,
 } from 'lucide-react'
-import { useIsMobile } from '@/hooks/use-mobile'
 
 export function FilterSortControls() {
   const {
@@ -43,7 +42,6 @@ export function FilterSortControls() {
     mediaTypeFilter,
     setMediaTypeFilter,
   } = useMovieStore()
-  const isMobile = useIsMobile()
 
   const availableGenres = useMemo(() => {
     if (!recommendations.length || !genreMap.size) return []
@@ -130,11 +128,12 @@ export function FilterSortControls() {
       <div className="flex w-full flex-col sm:flex-row sm:w-auto items-center gap-2">
         <Select value={mediaTypeFilter} onValueChange={(value) => setMediaTypeFilter(value as any)}>
           <SelectTrigger className="w-full sm:w-[120px]">
-            {isMobile ? (
-              <div className="flex-1 flex justify-center">{getMediaTypeIcon(mediaTypeFilter)}</div>
-            ) : (
-              <SelectValue placeholder="Type" />
-            )}
+            <div className="flex-1 text-center sm:text-left">
+              <div className="sm:hidden inline-block">{getMediaTypeIcon(mediaTypeFilter)}</div>
+              <div className="hidden sm:inline-block">
+                <SelectValue placeholder="Type" />
+              </div>
+            </div>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Types</SelectItem>
@@ -145,11 +144,12 @@ export function FilterSortControls() {
         
         <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
           <SelectTrigger className="w-full sm:w-[160px]">
-            {isMobile ? (
-                <div className="flex-1 flex justify-center">{getSortIcon(sortBy)}</div>
-            ) : (
+            <div className="flex-1 text-center sm:text-left">
+              <div className="sm:hidden inline-block">{getSortIcon(sortBy)}</div>
+              <div className="hidden sm:inline-block">
                 <SelectValue placeholder="Sort by" />
-            )}
+              </div>
+            </div>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="default">Default</SelectItem>
