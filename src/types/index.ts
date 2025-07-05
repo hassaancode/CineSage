@@ -1,12 +1,13 @@
-export interface Movie {
+export interface Media {
   id: number;
-  title: string;
+  title: string; // Unified from movie.title or tv.name
   overview: string;
   poster_path: string | null;
-  release_date: string;
+  release_date: string; // Unified from movie.release_date or tv.first_air_date
   vote_average: number;
   popularity: number;
   genre_ids: number[];
+  media_type: 'movie' | 'tv';
 }
 
 export interface AnalyzedUserInput {

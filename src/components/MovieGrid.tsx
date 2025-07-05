@@ -22,7 +22,7 @@ function WelcomeMessage() {
             </div>
             <h2 className="font-headline text-4xl mb-4">Welcome to CineSage</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
-                Tell us what you're in the mood for, and our AI will suggest the perfect movies for your night in.
+                Tell us what you're in the mood for, and our AI will suggest the perfect movies and TV shows for your night in.
             </p>
         </div>
     )
@@ -34,7 +34,7 @@ function NoResultsMessage() {
             <div className="mx-auto w-fit p-4 bg-primary/10 rounded-full mb-6">
                 <Film className="h-10 w-10 text-primary"/>
             </div>
-            <h2 className="font-headline text-4xl mb-4">No Movies Match Your Filters</h2>
+            <h2 className="font-headline text-4xl mb-4">No Results Match Your Filters</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
                 Try adjusting your sort and filter options to find what you're looking for.
             </p>
@@ -97,8 +97,8 @@ export function MovieGrid() {
     const { data, error } = await getMoreAIRecommendations(userInput, recommendations)
     if (error) {
         toast({ variant: 'destructive', title: 'Error', description: error })
-    } else if (data?.movies && data.movies.length > 0) {
-        appendRecommendations(data.movies)
+    } else if (data?.media && data.media.length > 0) {
+        appendRecommendations(data.media)
     } else {
         toast({ title: 'All set!', description: "You've reached the end of the recommendations." })
     }
@@ -110,7 +110,7 @@ export function MovieGrid() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.07,
       },
     },
   }

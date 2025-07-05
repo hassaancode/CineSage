@@ -33,7 +33,7 @@ export function FilterSortControls() {
 
   const availableGenres = useMemo(() => {
     if (!recommendations.length || !genreMap.size) return []
-    const genreIds = new Set(recommendations.flatMap((movie) => movie.genre_ids))
+    const genreIds = new Set(recommendations.flatMap((media) => media.genre_ids))
     return Array.from(genreIds)
       .map((id) => ({ id, name: genreMap.get(id) }))
       .filter((genre): genre is { id: number; name: string } => !!genre.name)

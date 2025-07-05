@@ -10,7 +10,7 @@ import { useMovieStore } from '@/store/movie-store'
 import { getAIRecommendations, getAutocompleteSuggestions } from '@/app/actions'
 import { useToast } from '@/hooks/use-toast'
 import Image from 'next/image'
-import type { Movie } from '@/types'
+import type { Media } from '@/types'
 
 export function SearchBar() {
   const [query, setQuery] = useState('')
@@ -74,7 +74,7 @@ export function SearchBar() {
       setRecommendations([], '')
       setAnalysis(null)
     } else if (data) {
-      setRecommendations(data.movies, searchQuery)
+      setRecommendations(data.media, searchQuery)
       if (data.analysis !== null && data.analysis !== undefined) {
  setAnalysis(data.analysis)
       }
@@ -87,8 +87,8 @@ export function SearchBar() {
     handleSearch(query)
   }
 
-  const handleSuggestionClick = (movie: Movie) => {
-    setQuery(movie.title)
+  const handleSuggestionClick = (media: Media) => {
+    setQuery(media.title)
     setAutocomplete([])
     // We can either trigger a search for this specific movie title or let the user do it.
     // For now, we will just fill the input.
@@ -101,7 +101,7 @@ export function SearchBar() {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Describe a movie... e.g., 'a funny space opera with aliens'"
+            placeholder="Describe a movie or TV show... e.g., 'a funny space opera with aliens'"
             className="w-full pl-12 pr-28 sm:pr-32 py-6 text-sm rounded-full shadow-lg "
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -125,24 +125,24 @@ export function SearchBar() {
         <Card className="absolute top-full mt-2 w-full z-10 shadow-xl animate-in fade-in-0 duration-200">
           <CardContent className="p-2">
             <ul className="space-y-1">
-              {autocomplete.map((movie) => (
-                <li key={movie.id}>
+              {autocomplete.map((media) => (
+                <li key={media.id}>
                   <button
                     onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => handleSuggestionClick(movie)}
+                    onClick={() => handleSuggestionClick(media)}
                     className="w-full text-left p-2 rounded-md hover:bg-accent/10 flex items-center gap-4"
                   >
                     <Image 
-                      src={movie.poster_path ? `https://image.tmdb.org/t/p/w92${movie.poster_path}` : 'https://placehold.co/45x68'}
-                      alt={movie.title}
+                      src={media.poster_path ? `https://image.tmdb.org/t/p/w92${media.poster_path}` : 'https://placehold.co/45x68'}
+                      alt={media.title}
                       width={40}
                       height={60}
                       className="rounded-sm bg-muted"
                       data-ai-hint="movie poster"
                     />
                     <div className="overflow-hidden">
-                      <p className="font-semibold truncate">{movie.title}</p>
-                      {movie.release_date && <p className="text-sm text-muted-foreground">{new Date(movie.release_date).getFullYear()}</p>}
+                      <p className="font-semibold truncate">{media.title}</p>
+                      {media.release_date && <p className="text-sm text-muted-foreground">{new Date(media.release_date).getFullYear()}</p>}
                     </div>
                   </button>
                 </li>

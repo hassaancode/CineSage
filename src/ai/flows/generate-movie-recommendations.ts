@@ -3,49 +3,55 @@
 'use server';
 
 /**
- * @fileOverview AI-powered movie recommendations based on user input.
+ * @fileOverview AI-powered media recommendations (movies and TV shows) based on user input.
  *
- * - generateMovieRecommendations - A function that generates movie recommendations.
- * - GenerateMovieRecommendationsInput - The input type for the generateMovieRecommendations function.
- * - GenerateMovieRecommendationsOutput - The return type for the generateMovieRecommendations function.
+ * - generateMediaRecommendations - A function that generates media recommendations.
+ * - GenerateMediaRecommendationsInput - The input type for the generateMediaRecommendations function.
+ * - GenerateMediaRecommendationsOutput - The return type for the generateMediaRecommendations function.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const GenerateMovieRecommendationsInputSchema = z.object({
+const GenerateMediaRecommendationsInputSchema = z.object({
   userInput: z
     .string()
-    .describe('The user input describing the type of movie they want to watch.'),
-  exclude: z.array(z.string()).optional().describe('A list of movie titles to exclude from the recommendations.'),
+    .describe('The user input describing the type of movie or TV show they want to watch.'),
+  exclude: z.array(z.string()).optional().describe('A list of movie or TV show titles to exclude from the recommendations.'),
 });
-export type GenerateMovieRecommendationsInput = z.infer<
-  typeof GenerateMovieRecommendationsInputSchema
+export type GenerateMediaRecommendationsInput = z.infer<
+  typeof GenerateMediaRecommendationsInputSchema
 >;
 
-const GenerateMovieRecommendationsOutputSchema = z.object({
-  movieRecommendations: z
-    .array(z.string())
-    .describe('A list of movie recommendations based on the user input.'),
+const MediaRecommendationSchema = z.object({
+    title: z.string().describe("The title of the movie or TV show."),
+    type: z.enum(['movie', 'tv']).describe("The type of media, either 'movie' or 'tv'.")
 });
-export type GenerateMovieRecommendationsOutput = z.infer<
-  typeof GenerateMovieRecommendationsOutputSchema
+
+
+const GenerateMediaRecommendationsOutputSchema = z.object({
+  mediaRecommendations: z
+    .array(MediaRecommendationSchema)
+    .describe('A list of media recommendations based on the user input.'),
+});
+export type GenerateMediaRecommendationsOutput = z.infer<
+  typeof GenerateMediaRecommendationsOutputSchema
 >;
 
-export async function generateMovieRecommendations(
-  input: GenerateMovieRecommendationsInput
-): Promise<GenerateMovieRecommendationsOutput> {
-  return generateMovieRecommendationsFlow(input);
+export async function generateMediaRecommendations(
+  input: GenerateMediaRecommendationsInput
+): Promise<GenerateMediaRecommendationsOutput> {
+  return generateMediaRecommendationsFlow(input);
 }
 
 const prompt = ai.definePrompt({
-  name: 'generateMovieRecommendationsPrompt',
-  input: {schema: GenerateMovieRecommendationsInputSchema},
-  output: {schema: GenerateMovieRecommendationsOutputSchema},
-  prompt: `You are a movie expert. Based on the user input, recommend at least 10 movies.
+  name: 'generateMediaRecommendationsPrompt',
+  input: {schema: GenerateMediaRecommendationsInputSchema},
+  output: {schema: GenerateMediaRecommendationsOutputSchema},
+  prompt: `You are a movie and TV show expert. Based on the user input, recommend at least 10 movies or TV shows. For each, specify if it's a 'movie' or a 'tv' show.
 {{#if exclude}}
 
-Do not include any of the following movies in your new recommendations:
+Do not include any of the following titles in your new recommendations:
 {{#each exclude}}
 - {{{this}}}
 {{/each}}
@@ -53,14 +59,14 @@ Do not include any of the following movies in your new recommendations:
 
 User Input: {{{userInput}}}
 
-Ensure that your response is a JSON array of strings, where each string is a movie title.`,
+Ensure that your response is a JSON object with a 'mediaRecommendations' key, containing an array of objects. Each object must have 'title' and 'type' ('movie' or 'tv') properties.`,
 });
 
-const generateMovieRecommendationsFlow = ai.defineFlow(
+const generateMediaRecommendationsFlow = ai.defineFlow(
   {
-    name: 'generateMovieRecommendationsFlow',
-    inputSchema: GenerateMovieRecommendationsInputSchema,
-    outputSchema: GenerateMovieRecommendationsOutputSchema,
+    name: 'generateMediaRecommendationsFlow',
+    inputSchema: GenerateMediaRecommendationsInputSchema,
+    outputSchema: GenerateMediaRecommendationsOutputSchema,
   },
   async input => {
     const {output} = await prompt(input);

@@ -1,23 +1,23 @@
 import { create } from 'zustand'
-import type { Movie, AnalyzedUserInput } from '@/types'
+import type { Media, AnalyzedUserInput } from '@/types'
 
 type SortByType = 'popularity' | 'vote_average' | 'release_date' | '';
 
 type MovieState = {
   userInput: string
-  recommendations: Movie[]
+  recommendations: Media[]
   analysis: AnalyzedUserInput | null
-  autocomplete: Movie[]
+  autocomplete: Media[]
   loading: boolean
   loadingMore: boolean
   error: string | null
   sortBy: SortByType
   activeGenreFilters: number[]
   genreMap: Map<number, string>
-  setRecommendations: (movies: Movie[], userInput: string) => void
-  appendRecommendations: (movies: Movie[]) => void
+  setRecommendations: (media: Media[], userInput: string) => void
+  appendRecommendations: (media: Media[]) => void
   setAnalysis: (analysis: AnalyzedUserInput | null) => void
-  setAutocomplete: (movies: Movie[]) => void
+  setAutocomplete: (media: Media[]) => void
   setLoading: (loading: boolean) => void
   setLoadingMore: (loadingMore: boolean) => void
   setError: (error: string | null) => void
@@ -43,17 +43,17 @@ const initialState = {
 
 export const useMovieStore = create<MovieState>((set) => ({
   ...initialState,
-  setRecommendations: (movies, userInput) => set({ 
-    recommendations: movies, 
+  setRecommendations: (media, userInput) => set({ 
+    recommendations: media, 
     userInput: userInput,
     activeGenreFilters: [], 
     sortBy: '',
   }),
-  appendRecommendations: (movies) => set((state) => ({ 
-    recommendations: [...state.recommendations, ...movies] 
+  appendRecommendations: (media) => set((state) => ({ 
+    recommendations: [...state.recommendations, ...media] 
   })),
   setAnalysis: (analysis) => set({ analysis: analysis }),
-  setAutocomplete: (movies) => set({ autocomplete: movies }),
+  setAutocomplete: (media) => set({ autocomplete: media }),
   setLoading: (loading) => set({ loading }),
   setLoadingMore: (loadingMore) => set({ loadingMore }),
   setError: (error) => set({ error }),
