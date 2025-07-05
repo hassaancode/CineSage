@@ -51,8 +51,8 @@ export function FilterSortControls() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
-                <ListFilter className="mr-2 h-4 w-4" />
-                Filter Genres
+                <ListFilter className="h-4 w-4" />
+                
                 {activeGenreFilters.length > 0 && (
                   <span className="ml-2 rounded-full bg-secondary text-secondary-foreground h-6 w-6 flex items-center justify-center text-xs">
                     {activeGenreFilters.length}
@@ -85,9 +85,9 @@ export function FilterSortControls() {
         )}
       </div>
 
-      <div className="flex items-center gap-2">        
+      <div className="flex w-[60%] sm:max-w-40 items-center gap-2">        
         <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>

@@ -5,7 +5,6 @@ import { useEffect } from 'react'
 import { SearchBar } from '@/components/SearchBar'
 import { MovieGrid } from '@/components/MovieGrid'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { FilterSortControls } from '@/components/FilterSortControls'
 
 export default function Home() {
   const theme = useThemeStore((state) => state.theme)
@@ -34,7 +33,6 @@ export default function Home() {
             </p>
           </section>
           <SearchBar />
-          <FilterSortControls />
           <MovieGrid />
         </div>
       </main>

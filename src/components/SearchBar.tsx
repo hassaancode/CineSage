@@ -100,7 +100,7 @@ export function SearchBar() {
           <Input
             type="text"
             placeholder="Describe a movie... e.g., 'a funny space opera with aliens'"
-            className="w-full pl-12 pr-28 sm:pr-32 py-6 text-base sm:text-lg rounded-full shadow-lg focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="w-full pl-12 pr-28 sm:pr-32 py-6 text-sm rounded-full shadow-lg "
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => { if (query.length > 2) startTransition(async () => { const { data } = await getAutocompleteSuggestions(query); setAutocomplete(data || []) })}}

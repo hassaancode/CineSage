@@ -11,6 +11,7 @@ import { getGenreMap } from '@/lib/tmdb'
 import { getMoreAIRecommendations } from '@/app/actions'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
+import { FilterSortControls } from './FilterSortControls'
 
 function WelcomeMessage() {
     return (
@@ -132,18 +133,21 @@ export function MovieGrid() {
     return <WelcomeMessage />;
   }
 
-  if (filteredAndSortedMovies.length === 0) {
-    return <NoResultsMessage />;
-  }
-
   return (
     <>
       <AnalyzedClues />
-      <div className="mt-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 animate-in fade-in-0 duration-500">
-        {filteredAndSortedMovies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
-        ))}
-      </div>
+      <FilterSortControls />
+      
+      {filteredAndSortedMovies.length > 0 ? (
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 animate-in fade-in-0 duration-500">
+          {filteredAndSortedMovies.map((movie) => (
+            <MovieCard key={movie.id} movie={movie} />
+          ))}
+        </div>
+      ) : (
+        <NoResultsMessage />
+      )}
+
       {recommendations.length > 0 && (
         <div className="mt-10 text-center">
             <Button onClick={handleLoadMore} size="lg" disabled={loadingMore}>
