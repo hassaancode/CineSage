@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import type { Media, AnalyzedUserInput } from '@/types'
 
-type SortByType = 'popularity' | 'vote_average' | 'release_date' | '';
+type SortByType = 'popularity' | 'vote_average' | 'release_date' | 'default';
+type MediaTypeFilter = 'all' | 'movie' | 'tv';
 
 type MovieState = {
   userInput: string
@@ -14,6 +15,7 @@ type MovieState = {
   sortBy: SortByType
   activeGenreFilters: number[]
   genreMap: Map<number, string>
+  mediaTypeFilter: MediaTypeFilter
   setRecommendations: (media: Media[], userInput: string) => void
   appendRecommendations: (media: Media[]) => void
   setAnalysis: (analysis: AnalyzedUserInput | null) => void
@@ -24,6 +26,7 @@ type MovieState = {
   setSortBy: (sortBy: SortByType) => void
   toggleGenreFilter: (genreId: number) => void
   setGenreMap: (genreMap: Map<number, string>) => void
+  setMediaTypeFilter: (filter: MediaTypeFilter) => void
   clearFilters: () => void
   clearState: () => void
 }
@@ -36,9 +39,10 @@ const initialState = {
   loading: false,
   loadingMore: false,
   error: null,
-  sortBy: '' as SortByType,
+  sortBy: 'default' as SortByType,
   activeGenreFilters: [] as number[],
   genreMap: new Map<number, string>(),
+  mediaTypeFilter: 'all' as MediaTypeFilter,
 }
 
 export const useMovieStore = create<MovieState>((set) => ({
@@ -47,7 +51,8 @@ export const useMovieStore = create<MovieState>((set) => ({
     recommendations: media, 
     userInput: userInput,
     activeGenreFilters: [], 
-    sortBy: '',
+    sortBy: 'default',
+    mediaTypeFilter: 'all',
   }),
   appendRecommendations: (media) => set((state) => ({ 
     recommendations: [...state.recommendations, ...media] 
@@ -68,6 +73,7 @@ export const useMovieStore = create<MovieState>((set) => ({
     return { activeGenreFilters: Array.from(activeGenreFilters) };
   }),
   setGenreMap: (genreMap) => set({ genreMap }),
+  setMediaTypeFilter: (filter) => set({ mediaTypeFilter: filter }),
   clearFilters: () => set({ activeGenreFilters: [] }),
   clearState: () => set(initialState),
 }))

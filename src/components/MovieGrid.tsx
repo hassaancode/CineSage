@@ -53,6 +53,7 @@ export function MovieGrid() {
     userInput,
     sortBy,
     activeGenreFilters,
+    mediaTypeFilter,
     genreMap,
     setGenreMap,
    } = useMovieStore()
@@ -67,30 +68,37 @@ export function MovieGrid() {
   const filteredAndSortedMovies = useMemo(() => {
     let movies = [...recommendations];
 
+    if (mediaTypeFilter !== 'all') {
+      movies = movies.filter(movie => movie.media_type === mediaTypeFilter);
+    }
+
     if (activeGenreFilters.length > 0) {
         movies = movies.filter(movie => 
             activeGenreFilters.every(filterId => movie.genre_ids && movie.genre_ids.includes(filterId))
         );
     }
-
-    switch (sortBy) {
-        case 'popularity':
-            movies.sort((a, b) => b.popularity - a.popularity);
-            break;
-        case 'vote_average':
-            movies.sort((a, b) => b.vote_average - a.vote_average);
-            break;
-        case 'release_date':
-            movies.sort((a, b) => {
-              const dateA = a.release_date ? new Date(a.release_date).getTime() : 0;
-              const dateB = b.release_date ? new Date(b.release_date).getTime() : 0;
-              return dateB - dateA;
-            });
-            break;
+    
+    if (sortBy !== 'default') {
+      switch (sortBy) {
+          case 'popularity':
+              movies.sort((a, b) => b.popularity - a.popularity);
+              break;
+          case 'vote_average':
+              movies.sort((a, b) => b.vote_average - a.vote_average);
+              break;
+          case 'release_date':
+              movies.sort((a, b) => {
+                const dateA = a.release_date ? new Date(a.release_date).getTime() : 0;
+                const dateB = b.release_date ? new Date(b.release_date).getTime() : 0;
+                return dateB - a;
+              });
+              break;
+      }
     }
 
+
     return movies;
-  }, [recommendations, sortBy, activeGenreFilters])
+  }, [recommendations, sortBy, activeGenreFilters, mediaTypeFilter])
 
   const handleLoadMore = async () => {
     setLoadingMore(true)
@@ -115,7 +123,7 @@ export function MovieGrid() {
     },
   }
 
-  const animationKey = `${userInput}-${sortBy}-${activeGenreFilters.join(',')}`
+  const animationKey = `${userInput}-${sortBy}-${activeGenreFilters.join(',')}-${mediaTypeFilter}`
 
   if (loading) {
     return (
@@ -167,7 +175,7 @@ export function MovieGrid() {
         <NoResultsMessage />
       )}
 
-      {recommendations.length > 0 && (
+      {recommendations.length > 0 && filteredAndSortedMovies.length > 0 && (
         <div className="mt-10 text-center">
             <Button onClick={handleLoadMore} size="lg" disabled={loadingMore}>
               {loadingMore ? (

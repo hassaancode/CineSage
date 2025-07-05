@@ -29,6 +29,8 @@ export function FilterSortControls() {
     toggleGenreFilter,
     genreMap,
     clearFilters,
+    mediaTypeFilter,
+    setMediaTypeFilter,
   } = useMovieStore()
 
   const availableGenres = useMemo(() => {
@@ -87,12 +89,24 @@ export function FilterSortControls() {
         )}
       </div>
 
-      <div className="flex w-[60%] sm:max-w-40 items-center gap-2">        
-        <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
-          <SelectTrigger className="w-full">
+      <div className="flex w-full flex-col sm:flex-row sm:w-auto items-center gap-2">
+        <Select value={mediaTypeFilter} onValueChange={(value) => setMediaTypeFilter(value as any)}>
+          <SelectTrigger className="w-full sm:w-[120px]">
+            <SelectValue placeholder="Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="movie">Movies</SelectItem>
+            <SelectItem value="tv">TV Shows</SelectItem>
+          </SelectContent>
+        </Select>
+        
+        <Select value={sortBy} onValuechange={(value) => setSortBy(value as any)}>
+          <SelectTrigger className="w-full sm:w-[160px]">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="default">Default</SelectItem>
             <SelectItem value="popularity">Popularity</SelectItem>
             <SelectItem value="vote_average">Rating</SelectItem>
             <SelectItem value="release_date">Release Date</SelectItem>
