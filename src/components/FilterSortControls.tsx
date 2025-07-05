@@ -45,12 +45,12 @@ export function FilterSortControls() {
   }
 
   return (
-    <div className="my-8 flex flex-row gap-4 w-full sm:justify-between items-start animate-in fade-in-0 duration-500">
-      <div className="flex flex-col items-start gap-2 w-full sm:w-auto">
+    <div className="my-8 flex flex-wrap items-center justify-between gap-4 animate-in fade-in-0 duration-500">
+      <div className="flex items-center gap-2">
         {availableGenres.length > 0 && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="sm:flex-initial">
+              <Button variant="outline">
                 <ListFilter className="mr-2 h-4 w-4" />
                 Filter Genres
                 {activeGenreFilters.length > 0 && (
