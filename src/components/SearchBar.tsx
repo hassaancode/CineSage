@@ -126,6 +126,7 @@ export function SearchBar() {
               {autocomplete.map((movie) => (
                 <li key={movie.id}>
                   <button
+                    onMouseDown={(e) => e.preventDefault()}
                     onClick={() => handleSuggestionClick(movie)}
                     className="w-full text-left p-2 rounded-md hover:bg-accent/10 flex items-center gap-4"
                   >
