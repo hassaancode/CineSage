@@ -108,7 +108,7 @@ export function SearchBar() {
           <Button 
             type="submit" 
             className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 px-4 sm:px-5 font-bold bg-accent hover:bg-accent/90" 
-            disabled={loading}
+            disabled={loading || !query.trim()}
           >
             {loading ? (
               <Loader2 className="h-5 w-5 animate-spin" />

@@ -105,7 +105,7 @@ export function MovieGrid() {
 
   if (loading) {
     return (
-      <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      <div className="mt-12 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="space-y-2">
             <Skeleton className="aspect-[2/3] w-full" />
@@ -139,7 +139,7 @@ export function MovieGrid() {
   return (
     <>
       <AnalyzedClues />
-      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 animate-in fade-in-0 duration-500">
+      <div className="mt-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 animate-in fade-in-0 duration-500">
         {filteredAndSortedMovies.map((movie) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
