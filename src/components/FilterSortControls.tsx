@@ -18,7 +18,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ListFilter, X } from 'lucide-react'
+import {
+  ListFilter,
+  X,
+  Film,
+  Tv,
+  List,
+  TrendingUp,
+  Star,
+  CalendarDays,
+  ArrowDownUp,
+} from 'lucide-react'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 export function FilterSortControls() {
   const {
@@ -32,6 +43,7 @@ export function FilterSortControls() {
     mediaTypeFilter,
     setMediaTypeFilter,
   } = useMovieStore()
+  const isMobile = useIsMobile()
 
   const availableGenres = useMemo(() => {
     if (!recommendations.length || !genreMap.size) return []
@@ -46,7 +58,33 @@ export function FilterSortControls() {
     return null
   }
 
-  const hasActiveFilters = activeGenreFilters.length > 0;
+  const hasActiveFilters = activeGenreFilters.length > 0
+
+  const getMediaTypeIcon = (type: string) => {
+    switch (type) {
+      case 'movie':
+        return <Film className="h-4 w-4" />
+      case 'tv':
+        return <Tv className="h-4 w-4" />
+      case 'all':
+      default:
+        return <List className="h-4 w-4" />
+    }
+  }
+
+  const getSortIcon = (sort: string) => {
+    switch (sort) {
+      case 'popularity':
+        return <TrendingUp className="h-4 w-4" />
+      case 'vote_average':
+        return <Star className="h-4 w-4" />
+      case 'release_date':
+        return <CalendarDays className="h-4 w-4" />
+      case 'default':
+      default:
+        return <ArrowDownUp className="h-4 w-4" />
+    }
+  }
 
   return (
     <div className="my-8 flex flex-wrap items-center justify-between gap-4 animate-in fade-in-0 duration-500">
@@ -92,7 +130,11 @@ export function FilterSortControls() {
       <div className="flex w-full flex-col sm:flex-row sm:w-auto items-center gap-2">
         <Select value={mediaTypeFilter} onValueChange={(value) => setMediaTypeFilter(value as any)}>
           <SelectTrigger className="w-full sm:w-[120px]">
-            <SelectValue placeholder="Type" />
+            {isMobile ? (
+              <div className="flex-1 flex justify-center">{getMediaTypeIcon(mediaTypeFilter)}</div>
+            ) : (
+              <SelectValue placeholder="Type" />
+            )}
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Types</SelectItem>
@@ -103,7 +145,11 @@ export function FilterSortControls() {
         
         <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
           <SelectTrigger className="w-full sm:w-[160px]">
-            <SelectValue placeholder="Sort by" />
+            {isMobile ? (
+                <div className="flex-1 flex justify-center">{getSortIcon(sortBy)}</div>
+            ) : (
+                <SelectValue placeholder="Sort by" />
+            )}
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="default">Default</SelectItem>
