@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { Movie, AnalyzedUserInput } from '@/types'
 
-type SortByType = 'popularity' | 'vote_average' | 'release_date';
+type SortByType = 'popularity' | 'vote_average' | 'release_date' | '';
 
 type MovieState = {
   userInput: string
@@ -36,7 +36,7 @@ const initialState = {
   loading: false,
   loadingMore: false,
   error: null,
-  sortBy: 'popularity' as SortByType,
+  sortBy: '' as SortByType,
   activeGenreFilters: [] as number[],
   genreMap: new Map<number, string>(),
 }
@@ -47,7 +47,7 @@ export const useMovieStore = create<MovieState>((set) => ({
     recommendations: movies, 
     userInput: userInput,
     activeGenreFilters: [], 
-    sortBy: 'popularity',
+    sortBy: '',
   }),
   appendRecommendations: (movies) => set((state) => ({ 
     recommendations: [...state.recommendations, ...movies] 
@@ -68,6 +68,6 @@ export const useMovieStore = create<MovieState>((set) => ({
     return { activeGenreFilters: Array.from(activeGenreFilters) };
   }),
   setGenreMap: (genreMap) => set({ genreMap }),
-  clearFilters: () => set({ activeGenreFilters: [], sortBy: 'popularity' }),
+  clearFilters: () => set({ activeGenreFilters: [], sortBy: '' }),
   clearState: () => set(initialState),
 }))

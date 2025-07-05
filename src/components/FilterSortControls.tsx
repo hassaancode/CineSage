@@ -44,6 +44,8 @@ export function FilterSortControls() {
     return null
   }
 
+  const hasActiveFilters = activeGenreFilters.length > 0 || !!sortBy
+
   return (
     <div className="my-8 flex flex-wrap items-center justify-between gap-4 animate-in fade-in-0 duration-500">
       <div className="flex items-center gap-2">
@@ -77,7 +79,7 @@ export function FilterSortControls() {
           </DropdownMenu>
         )}
 
-        {activeGenreFilters.length > 0 && (
+        {hasActiveFilters && (
           <Button variant="ghost" size="sm" onClick={() => clearFilters()} className="text-muted-foreground">
             <X className="mr-1 h-4 w-4" />
             Clear
