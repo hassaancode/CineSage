@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { useMovieStore } from '@/store/movie-store'
 import { MovieCard } from '@/components/MovieCard'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -104,6 +105,16 @@ export function MovieGrid() {
     setLoadingMore(false)
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  }
+
   if (loading) {
     return (
       <div className="mt-12 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -139,11 +150,17 @@ export function MovieGrid() {
       <FilterSortControls />
       
       {filteredAndSortedMovies.length > 0 ? (
-        <div className="mt-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 animate-in fade-in-0 duration-500">
+        <motion.div
+          key={userInput}
+          className="mt-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {filteredAndSortedMovies.map((movie) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}
-        </div>
+        </motion.div>
       ) : (
         <NoResultsMessage />
       )}
