@@ -68,6 +68,6 @@ export const useMovieStore = create<MovieState>((set) => ({
     return { activeGenreFilters: Array.from(activeGenreFilters) };
   }),
   setGenreMap: (genreMap) => set({ genreMap }),
-  clearFilters: () => set({ activeGenreFilters: [], sortBy: '' }),
+  clearFilters: () => set({ activeGenreFilters: [] }),
   clearState: () => set(initialState),
 }))

@@ -44,7 +44,7 @@ export function FilterSortControls() {
     return null
   }
 
-  const hasActiveFilters = activeGenreFilters.length > 0 || !!sortBy
+  const hasActiveFilters = activeGenreFilters.length > 0;
 
   return (
     <div className="my-8 flex flex-wrap items-center justify-between gap-4 animate-in fade-in-0 duration-500">
