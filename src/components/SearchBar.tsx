@@ -122,7 +122,7 @@ export function SearchBar() {
         </div>
       </form>
       {autocomplete.length > 0 && (
-        <Card className="absolute top-full mt-2 w-full z-10 shadow-xl animate-in fade-in-0 duration-200">
+        <Card className="absolute top-full mt-2 w-full z-[20] shadow-xl animate-in fade-in-0 duration-200">
           <CardContent className="p-2">
             <ul className="space-y-1">
               {autocomplete.map((media) => (
@@ -130,7 +130,7 @@ export function SearchBar() {
                   <button
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => handleSuggestionClick(media)}
-                    className="w-full text-left p-2 rounded-md hover:bg-accent/10 flex items-center gap-4"
+                    className="w-full text-left p-2 rounded-md hover:bg-muted-foreground/10 flex items-center gap-4"
                   >
                     <Image 
                       src={media.poster_path ? `https://image.tmdb.org/t/p/w92${media.poster_path}` : 'https://placehold.co/45x68'}
