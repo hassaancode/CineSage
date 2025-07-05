@@ -115,6 +115,8 @@ export function MovieGrid() {
     },
   }
 
+  const animationKey = `${userInput}-${sortBy}-${activeGenreFilters.join(',')}`
+
   if (loading) {
     return (
       <div className="mt-12 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -151,7 +153,7 @@ export function MovieGrid() {
       
       {filteredAndSortedMovies.length > 0 ? (
         <motion.div
-          key={userInput}
+          key={animationKey}
           className="mt-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
           variants={containerVariants}
           initial="hidden"
