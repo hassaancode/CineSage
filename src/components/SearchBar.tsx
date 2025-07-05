@@ -30,7 +30,7 @@ export function SearchBar() {
   } = useMovieStore()
 
   useEffect(() => {
-    if (debouncedQuery.length > 2) {
+    if (debouncedQuery.length > 1) {
       startTransition(async () => {
         const { data } = await getAutocompleteSuggestions(debouncedQuery)
         setAutocomplete(data || [])
@@ -103,7 +103,7 @@ export function SearchBar() {
             className="w-full pl-12 pr-28 sm:pr-32 py-6 text-sm rounded-full shadow-lg "
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => { if (query.length > 2) startTransition(async () => { const { data } = await getAutocompleteSuggestions(query); setAutocomplete(data || []) })}}
+            onFocus={() => { if (query.length > 1) startTransition(async () => { const { data } = await getAutocompleteSuggestions(query); setAutocomplete(data || []) })}}
           />
           <Button 
             type="submit" 
