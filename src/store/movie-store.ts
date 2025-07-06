@@ -6,6 +6,7 @@ type MediaTypeFilter = 'all' | 'movie' | 'tv';
 
 type MovieState = {
   userInput: string
+  searchMode: 'scenario' | 'movie'
   recommendations: Media[]
   analysis: AnalyzedUserInput | null
   autocomplete: Media[]
@@ -16,9 +17,13 @@ type MovieState = {
   activeGenreFilters: number[]
   genreMap: Map<number, string>
   mediaTypeFilter: MediaTypeFilter
-  setRecommendations: (media: Media[], userInput: string) => void
+  setRecommendations: (payload: {
+    media: Media[],
+    userInput: string,
+    searchMode: 'scenario' | 'movie',
+    analysis: AnalyzedUserInput | null
+  }) => void
   appendRecommendations: (media: Media[]) => void
-  setAnalysis: (analysis: AnalyzedUserInput | null) => void
   setAutocomplete: (media: Media[]) => void
   setLoading: (loading: boolean) => void
   setLoadingMore: (loadingMore: boolean) => void
@@ -33,6 +38,7 @@ type MovieState = {
 
 const initialState = {
   userInput: '',
+  searchMode: 'scenario' as const,
   recommendations: [],
   analysis: null,
   autocomplete: [],
@@ -47,9 +53,11 @@ const initialState = {
 
 export const useMovieStore = create<MovieState>((set) => ({
   ...initialState,
-  setRecommendations: (media, userInput) => set({ 
-    recommendations: media, 
-    userInput: userInput,
+  setRecommendations: (payload) => set({ 
+    recommendations: payload.media, 
+    userInput: payload.userInput,
+    searchMode: payload.searchMode,
+    analysis: payload.analysis,
     activeGenreFilters: [], 
     sortBy: 'default',
     mediaTypeFilter: 'all',
@@ -57,7 +65,6 @@ export const useMovieStore = create<MovieState>((set) => ({
   appendRecommendations: (media) => set((state) => ({ 
     recommendations: [...state.recommendations, ...media] 
   })),
-  setAnalysis: (analysis) => set({ analysis: analysis }),
   setAutocomplete: (media) => set({ autocomplete: media }),
   setLoading: (loading) => set({ loading }),
   setLoadingMore: (loadingMore) => set({ loadingMore }),

@@ -51,6 +51,7 @@ export function MovieGrid() {
     appendRecommendations,
     error,
     userInput,
+    searchMode,
     sortBy,
     activeGenreFilters,
     mediaTypeFilter,
@@ -102,7 +103,7 @@ export function MovieGrid() {
 
   const handleLoadMore = async () => {
     setLoadingMore(true)
-    const { data, error } = await getMoreAIRecommendations(userInput, recommendations)
+    const { data, error } = await getMoreAIRecommendations(userInput, recommendations, searchMode)
     if (error) {
         toast({ variant: 'destructive', title: 'Error', description: error })
     } else if (data?.media && data.media.length > 0) {

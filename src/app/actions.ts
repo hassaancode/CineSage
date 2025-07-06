@@ -7,7 +7,7 @@ import type { Media, AnalyzedUserInput } from '@/types'
 
 interface RecommendationResult {
   media: Media[]
-  analysis?: AnalyzedUserInput
+  analysis?: AnalyzedUserInput | null
 }
 
 async function processRecommendations(
@@ -37,16 +37,27 @@ async function processRecommendations(
 
 
 export async function getAIRecommendations(
-  userInput: string
+  userInput: string,
+  searchMode: 'scenario' | 'movie'
 ): Promise<{ data?: RecommendationResult; error?: string }> {
   if (!userInput) {
     return { error: 'Please enter a description of the movie you want to watch.' }
   }
 
   try {
+    const analysisPromise = searchMode === 'scenario'
+      ? analyzeUserInput({ userInput })
+      : Promise.resolve(null);
+
+    const recommendationUserInput = searchMode === 'movie'
+      ? `Find movies and TV shows similar to "${userInput}"`
+      : userInput;
+
+    const recommendationsPromise = generateMediaRecommendations({ userInput: recommendationUserInput });
+
     const [analysisResult, recommendationsResult] = await Promise.all([
-      analyzeUserInput({ userInput }),
-      generateMediaRecommendations({ userInput }),
+      analysisPromise,
+      recommendationsPromise
     ])
 
     if (!recommendationsResult?.mediaRecommendations || recommendationsResult.mediaRecommendations.length === 0) {
@@ -74,7 +85,8 @@ export async function getAIRecommendations(
 
 export async function getMoreAIRecommendations(
   userInput: string,
-  existingMedia: Media[]
+  existingMedia: Media[],
+  searchMode: 'scenario' | 'movie'
 ): Promise<{ data?: RecommendationResult; error?: string }> {
   if (!userInput) {
     return { error: 'No user input found to generate more recommendations.' }
@@ -83,8 +95,12 @@ export async function getMoreAIRecommendations(
   try {
     const existingMediaTitles = existingMedia.map(m => m.title)
     const existingMediaIds = new Set(existingMedia.map(m => m.id))
+    
+    const recommendationUserInput = searchMode === 'movie'
+      ? `Find movies and TV shows similar to "${userInput}"`
+      : userInput;
 
-    const recommendationsResult = await generateMediaRecommendations({ userInput, exclude: existingMediaTitles })
+    const recommendationsResult = await generateMediaRecommendations({ userInput: recommendationUserInput, exclude: existingMediaTitles })
 
     if (!recommendationsResult?.mediaRecommendations || recommendationsResult.mediaRecommendations.length === 0) {
       return { data: { media: [] } }

@@ -11,9 +11,12 @@ import { getAIRecommendations, getAutocompleteSuggestions } from '@/app/actions'
 import { useToast } from '@/hooks/use-toast'
 import Image from 'next/image'
 import type { Media } from '@/types'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 
 export function SearchBar() {
   const [query, setQuery] = useState('')
+  const [searchMode, setSearchMode] = useState<'scenario' | 'movie'>('scenario')
   const debouncedQuery = useDebounce(query, 300)
   const [isPending, startTransition] = useTransition()
   const { toast } = useToast()
@@ -21,8 +24,7 @@ export function SearchBar() {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const { 
-    setRecommendations, 
-    setAnalysis,
+    setRecommendations,
     setLoading, 
     setError,
     autocomplete,
@@ -68,18 +70,24 @@ export function SearchBar() {
     setAutocomplete([])
     setQuery(searchQuery);
 
-    const { data, error } = await getAIRecommendations(searchQuery)
+    const { data, error } = await getAIRecommendations(searchQuery, searchMode)
 
     if (error) {
       toast({ variant: 'destructive', title: 'Error', description: error })
       setError(error)
-      setRecommendations([], '')
-      setAnalysis(null)
+      setRecommendations({
+        media: [],
+        userInput: '',
+        searchMode: 'scenario',
+        analysis: null
+      })
     } else if (data) {
-      setRecommendations(data.media, searchQuery)
-      if (data.analysis !== null && data.analysis !== undefined) {
- setAnalysis(data.analysis)
-      }
+      setRecommendations({
+        media: data.media, 
+        userInput: searchQuery,
+        searchMode: searchMode,
+        analysis: data.analysis ?? null
+      })
     }
     setLoading(false)
   }
@@ -91,20 +99,39 @@ export function SearchBar() {
 
   const handleSuggestionClick = (media: Media) => {
     setQuery(media.title)
+    setSearchMode('movie')
     setAutocomplete([])
-    // We can either trigger a search for this specific movie title or let the user do it.
-    // For now, we will just fill the input.
+    handleSearch(media.title)
   }
 
   return (
     <div ref={searchContainerRef} className="relative w-full max-w-2xl mx-auto">
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <Label htmlFor="search-mode" className={`cursor-pointer transition-colors ${searchMode === 'scenario' ? 'text-foreground' : 'text-muted-foreground'}`}>
+          Scenario
+        </Label>
+        <Switch
+          id="search-mode"
+          checked={searchMode === 'movie'}
+          onCheckedChange={(checked) => {
+            setSearchMode(checked ? 'movie' : 'scenario')
+          }}
+        />
+        <Label htmlFor="search-mode" className={`cursor-pointer transition-colors ${searchMode === 'movie' ? 'text-foreground' : 'text-muted-foreground'}`}>
+          Movie
+        </Label>
+      </div>
       <form onSubmit={handleFormSubmit}>
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             ref={inputRef}
             type="text"
-            placeholder="Describe a movie or TV show... e.g., 'a funny space opera with aliens'"
+            placeholder={
+              searchMode === 'scenario'
+                ? "Describe a movie or TV show... e.g., 'a funny space opera with aliens'"
+                : "Enter a movie or TV show title... e.g., 'Inception'"
+            }
             className="w-full pl-12 pr-28 sm:pr-32 py-6 text-sm rounded-full shadow-lg "
             value={query}
             onChange={(e) => setQuery(e.target.value)}
