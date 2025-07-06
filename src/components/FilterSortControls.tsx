@@ -125,11 +125,11 @@ export function FilterSortControls() {
         )}
       </div>
 
-      <div className="flex w-full flex-col sm:flex-row sm:w-auto items-center gap-2">
+      <div className="flex flex-row sm:w-auto items-center gap-2">
         <Select value={mediaTypeFilter} onValueChange={(value) => setMediaTypeFilter(value as any)}>
-          <SelectTrigger className="w-full sm:w-[120px]">
-            <div className="flex-1 text-center sm:text-left">
-              <div className="sm:hidden inline-block">{getMediaTypeIcon(mediaTypeFilter)}</div>
+          <SelectTrigger className="w-full sm:w-[160px]">
+            <div className="flex gap-2 items-center text-center sm:text-left">
+              <div className="inline-block">{getMediaTypeIcon(mediaTypeFilter)}</div>
               <div className="hidden sm:inline-block">
                 <SelectValue placeholder="Type" />
               </div>
@@ -143,9 +143,9 @@ export function FilterSortControls() {
         </Select>
         
         <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
-          <SelectTrigger className="w-full sm:w-[160px]">
-            <div className="flex-1 text-center sm:text-left">
-              <div className="sm:hidden inline-block">{getSortIcon(sortBy)}</div>
+          <SelectTrigger className=" sm:w-[160px]">
+            <div className="flex gap-2 items-center text-center sm:text-left">
+              <div className="inline-block">{getSortIcon(sortBy)}</div>
               <div className="hidden sm:inline-block">
                 <SelectValue placeholder="Sort by" />
               </div>

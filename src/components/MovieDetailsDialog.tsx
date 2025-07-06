@@ -48,7 +48,7 @@ export function MovieDetailsDialog({ movie: media, open, onOpenChange }: { movie
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl w-full p-0 max-h-[90vh] overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-3">
-          <div className="relative w-full aspect-[2/3]">
+          <div className="relative w-full hidden sm:flex ">
            <Image
             src={getImageUrl(media.poster_path)}
             alt={`Poster for ${media.title}`}
