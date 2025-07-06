@@ -134,6 +134,7 @@ export function FilterSortControls() {
                 <SelectValue placeholder="Type" />
               </div>
             </div>
+            
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Types</SelectItem>
