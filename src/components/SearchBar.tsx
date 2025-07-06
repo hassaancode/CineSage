@@ -18,6 +18,7 @@ export function SearchBar() {
   const [isPending, startTransition] = useTransition()
   const { toast } = useToast()
   const searchContainerRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const { 
     setRecommendations, 
@@ -61,6 +62,7 @@ export function SearchBar() {
   const handleSearch = async (searchQuery: string) => {
     if (!searchQuery.trim()) return;
 
+    inputRef.current?.blur()
     setLoading(true)
     setError(null)
     setAutocomplete([])
@@ -100,6 +102,7 @@ export function SearchBar() {
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
+            ref={inputRef}
             type="text"
             placeholder="Describe a movie or TV show... e.g., 'a funny space opera with aliens'"
             className="w-full pl-12 pr-28 sm:pr-32 py-6 text-sm rounded-full shadow-lg "
