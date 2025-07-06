@@ -1,7 +1,7 @@
 # CineSage - Ai Movie Recommendation System
 Ai movie recommendation system build in nextjs using Gemini Api and TMDB api
 
-# Features
+## Features
 1. Recommendations based on Scenario.
 2. Recommendations based on Movies.
 3. Genre Filters.
@@ -9,18 +9,20 @@ Ai movie recommendation system build in nextjs using Gemini Api and TMDB api
 5. Sorting Based on (Relase date / Popular / IMDB rating).
 6. Trailer for every movie dialog card.
 
-# Api's Used
+## Api's Used
 Gemini api  
 TMDB api
 
-
-# Prerequisites
+## Prerequisites
 
 Before running this project, make sure you have the following installed on your machine:
 
 - Node.js (https://nodejs.org)
 
+
 # Getting Started
+
+
 1. Clone the repository to your local machine:
 
     ```shell
