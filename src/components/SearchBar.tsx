@@ -106,19 +106,20 @@ export function SearchBar() {
 
   return (
     <div ref={searchContainerRef} className="relative w-full max-w-2xl mx-auto">
-      <div className="flex items-center justify-center gap-2 mb-4">
-        <Label htmlFor="search-mode" className={`cursor-pointer transition-colors ${searchMode === 'scenario' ? 'text-foreground' : 'text-muted-foreground'}`}>
-          Scenario
+      <div className="flex p-2 overflow-hidden border w-fit rounded-full items-center justify-center gap-2 mb-4 m-auto">
+        <Label htmlFor="search-mode" className={`cursor-pointer rounded-full p-3 ${searchMode === 'scenario' ? ' bg-active' : 'hover:bg-muted-foreground/10'}`}>
+          ✨ Describe
         </Label>
         <Switch
+        className='hidden'
           id="search-mode"
           checked={searchMode === 'movie'}
           onCheckedChange={(checked) => {
-            setSearchMode(checked ? 'movie' : 'scenario')
+          setSearchMode(checked ? 'movie' : 'scenario')
           }}
         />
-        <Label htmlFor="search-mode" className={`cursor-pointer transition-colors ${searchMode === 'movie' ? 'text-foreground' : 'text-muted-foreground'}`}>
-          Movie
+        <Label htmlFor="search-mode" className={`cursor-pointer rounded-full p-3  ${searchMode === 'movie' ? ' bg-active' : 'hover:bg-muted-foreground/10'}`}>
+          🎬 Movie / TV
         </Label>
       </div>
       <form onSubmit={handleFormSubmit}>
