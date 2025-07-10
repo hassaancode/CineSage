@@ -31,6 +31,26 @@ export function MovieDetailsDialog({ movie: media, open, onOpenChange }: { movie
 
   useEffect(() => {
     if (open) {
+      // Push a state to history when the dialog opens
+      window.history.pushState({ dialogOpen: true }, '')
+      
+      const handlePopState = (event: PopStateEvent) => {
+        // If the state we pushed is gone, close the dialog
+        if (!event.state?.dialogOpen) {
+          onOpenChange(false)
+        }
+      }
+
+      window.addEventListener('popstate', handlePopState)
+
+      return () => {
+        window.removeEventListener('popstate', handlePopState)
+      }
+    }
+  }, [open, onOpenChange])
+
+  useEffect(() => {
+    if (open) {
       setLoading(true)
       const fetchTrailer = async () => {
         const videos = await getMediaVideos(media.id, media.media_type)
@@ -44,8 +64,17 @@ export function MovieDetailsDialog({ movie: media, open, onOpenChange }: { movie
     }
   }, [media.id, media.media_type, open])
 
+  const handleOpenChange = (isOpen: boolean) => {
+    // If the dialog is being closed by the user (not by popstate)
+    // and our history state is still there, go back.
+    if (!isOpen && window.history.state?.dialogOpen) {
+      window.history.back()
+    }
+    onOpenChange(isOpen)
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-4xl w-full p-0 max-h-[90vh] overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-3">
           <div className="relative w-full hidden sm:flex ">
