@@ -63,7 +63,7 @@ export function MovieCard({ movie: media }: { movie: Media }) {
                 size="icon" 
                 className={cn(
                   "absolute top-2 left-2 z-10 h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/75 hover:text-white",
-                  isBookmarked && "text-primary"
+                  isBookmarked && "text-white"
                 )} 
                 onClick={handleBookmarkClick}
                 aria-label="Bookmark movie"
