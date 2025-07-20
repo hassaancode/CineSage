@@ -5,9 +5,12 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import type { Media } from '@/types'
-import { Star } from 'lucide-react'
+import { Star, Bookmark } from 'lucide-react'
 import { MovieDetailsDialog } from './MovieDetailsDialog'
 import { Badge } from './ui/badge'
+import { useMovieStore } from '@/store/movie-store'
+import { cn } from '@/lib/utils'
+import { Button } from './ui/button'
 
 const getImageUrl = (path: string | null) => {
   return path ? `https://image.tmdb.org/t/p/w500${path}` : 'https://placehold.co/500x750'
@@ -15,6 +18,14 @@ const getImageUrl = (path: string | null) => {
 
 export function MovieCard({ movie: media }: { movie: Media }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const { bookmarks, toggleBookmark } = useMovieStore()
+
+  const isBookmarked = bookmarks.some((b) => b.id === media.id)
+
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent dialog from opening when clicking bookmark
+    toggleBookmark(media);
+  };
 
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.8 },
@@ -40,6 +51,18 @@ export function MovieCard({ movie: media }: { movie: Media }) {
               <Badge variant={media.media_type === 'movie' ? 'default' : 'secondary'} className="absolute top-2 right-2 z-10">
                 {media.media_type === 'movie' ? 'Movie' : 'TV'}
               </Badge>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className={cn(
+                  "absolute top-2 left-2 z-10 h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/75 hover:text-white",
+                  isBookmarked && "text-primary"
+                )} 
+                onClick={handleBookmarkClick}
+                aria-label="Bookmark movie"
+              >
+                  <Bookmark className={cn("h-5 w-5", isBookmarked && "fill-current")} />
+              </Button>
               <Image
                 src={getImageUrl(media.poster_path)}
                 alt={`Poster for ${media.title}`}

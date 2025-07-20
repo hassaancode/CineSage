@@ -5,6 +5,9 @@ import { useEffect } from 'react'
 import { SearchBar } from '@/components/SearchBar'
 import { MovieGrid } from '@/components/MovieGrid'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Bookmark } from 'lucide-react'
 
 export default function Home() {
   const theme = useThemeStore((state) => state.theme)
@@ -20,7 +23,14 @@ export default function Home() {
         <h1 className="text-3xl md:text-4xl font-headline font-bold">
           <span className="text-primary">Cine</span><span>Sage</span>
         </h1>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <Link href="/bookmarks" passHref>
+            <Button variant="ghost" size="icon" aria-label="View Bookmarks">
+              <Bookmark />
+            </Button>
+          </Link>
+          <ThemeToggle />
+        </div>
       </header>
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-8">

@@ -10,11 +10,13 @@ import {
 } from '@/components/ui/dialog'
 import type { Media, Video } from '@/types'
 import { getMediaVideos } from '@/lib/tmdb'
-import { Star } from 'lucide-react'
+import { Star, Bookmark } from 'lucide-react'
 import Image from 'next/image'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useMovieStore } from '@/store/movie-store'
 import { Badge } from '@/components/ui/badge'
+import { Button } from './ui/button'
+import { cn } from '@/lib/utils'
 
 const getImageUrl = (path: string | null) => {
   return path ? `https://image.tmdb.org/t/p/w500${path}` : 'https://placehold.co/500x750'
@@ -23,7 +25,9 @@ const getImageUrl = (path: string | null) => {
 export function MovieDetailsDialog({ movie: media, open, onOpenChange }: { movie: Media; open: boolean; onOpenChange: (open: boolean) => void }) {
   const [trailer, setTrailer] = useState<Video | null>(null)
   const [loading, setLoading] = useState(true)
-  const genreMap = useMovieStore((state) => state.genreMap)
+  const { genreMap, bookmarks, toggleBookmark } = useMovieStore()
+  
+  const isBookmarked = bookmarks.some((b) => b.id === media.id)
 
   const mediaGenres = media.genre_ids
     .map(id => genreMap.get(id))
@@ -102,12 +106,21 @@ export function MovieDetailsDialog({ movie: media, open, onOpenChange }: { movie
               </DialogHeader>
 
             {mediaGenres.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-6">
+              <div className="flex flex-wrap gap-2 mb-4">
                 {mediaGenres.map((genre) => (
                   <Badge key={genre} variant="secondary">{genre}</Badge>
                 ))}
               </div>
             )}
+            
+            <Button
+              onClick={() => toggleBookmark(media)}
+              variant="outline"
+              className="w-full mb-6"
+            >
+              <Bookmark className={cn("mr-2 h-4 w-4", isBookmarked && "fill-primary text-primary")} />
+              {isBookmarked ? 'Remove from Bookmarks' : 'Add to Bookmarks'}
+            </Button>
             
             <DialogDescription className="text-base text-foreground/80 mb-6">{media.overview}</DialogDescription>
             
