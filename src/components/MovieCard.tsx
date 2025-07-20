@@ -11,6 +11,7 @@ import { Badge } from './ui/badge'
 import { useMovieStore } from '@/store/movie-store'
 import { cn } from '@/lib/utils'
 import { Button } from './ui/button'
+import { useToast } from '@/hooks/use-toast'
 
 const getImageUrl = (path: string | null) => {
   return path ? `https://image.tmdb.org/t/p/w500${path}` : 'https://placehold.co/500x750'
@@ -19,12 +20,18 @@ const getImageUrl = (path: string | null) => {
 export function MovieCard({ movie: media }: { movie: Media }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const { bookmarks, toggleBookmark } = useMovieStore()
+  const { toast } = useToast()
 
   const isBookmarked = bookmarks.some((b) => b.id === media.id)
 
   const handleBookmarkClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent dialog from opening when clicking bookmark
     toggleBookmark(media);
+    toast({
+      title: isBookmarked ? 'Bookmark Removed' : 'Bookmark Added',
+      description: `"${media.title}" has been ${isBookmarked ? 'removed from' : 'added to'} your bookmarks.`,
+      duration: 3000,
+    })
   };
 
   const cardVariants = {

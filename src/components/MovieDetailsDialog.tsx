@@ -17,6 +17,7 @@ import { useMovieStore } from '@/store/movie-store'
 import { Badge } from '@/components/ui/badge'
 import { Button } from './ui/button'
 import { cn } from '@/lib/utils'
+import { useToast } from '@/hooks/use-toast'
 
 const getImageUrl = (path: string | null) => {
   return path ? `https://image.tmdb.org/t/p/w500${path}` : 'https://placehold.co/500x750'
@@ -26,6 +27,7 @@ export function MovieDetailsDialog({ movie: media, open, onOpenChange }: { movie
   const [trailer, setTrailer] = useState<Video | null>(null)
   const [loading, setLoading] = useState(true)
   const { genreMap, bookmarks, toggleBookmark } = useMovieStore()
+  const { toast } = useToast()
   
   const isBookmarked = bookmarks.some((b) => b.id === media.id)
 
@@ -77,6 +79,15 @@ export function MovieDetailsDialog({ movie: media, open, onOpenChange }: { movie
     onOpenChange(isOpen)
   }
 
+  const handleBookmarkToggle = () => {
+    toggleBookmark(media);
+    toast({
+      title: isBookmarked ? 'Bookmark Removed' : 'Bookmark Added',
+      description: `"${media.title}" has been ${isBookmarked ? 'removed from' : 'added to'} your bookmarks.`,
+      duration: 3000,
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-4xl w-full p-0 max-h-[90vh] overflow-y-auto">
@@ -114,7 +125,7 @@ export function MovieDetailsDialog({ movie: media, open, onOpenChange }: { movie
             )}
             
             <Button
-              onClick={() => toggleBookmark(media)}
+              onClick={handleBookmarkToggle}
               variant="outline"
               className="w-full mb-6"
             >
