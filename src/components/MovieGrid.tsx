@@ -16,14 +16,10 @@ import { FilterSortControls } from './FilterSortControls'
 
 function WelcomeMessage() {
     return (
-        <div className="text-center py-20 animate-in fade-in-0 duration-500">
-            <div className="mx-auto w-fit p-4 bg-primary/10 rounded-full mb-6">
-                <Wand2 className="h-10 w-10 text-primary"/>
-            </div>
-            <h2 className="font-headline text-4xl mb-4">Welcome to CineSage</h2>
-            <p className="text-muted-foreground max-w-md mx-auto">
-                Tell us what you're in the mood for, and our AI will suggest the perfect movies and TV shows for your night in.
-            </p>
+        <div className="text-center py-20 animate-in fade-in-0 duration-500">        
+          <p className="text-muted-foreground max-w-md mx-auto">
+              Tell us what you're in the mood for, and our AI will suggest the perfect movies and TV shows for your night in.
+          </p>
         </div>
     )
 }

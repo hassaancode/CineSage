@@ -21,7 +21,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background">
       <header className="py-4 px-4 md:px-8 flex justify-between items-center sticky top-0 z-20 bg-background/80 backdrop-blur-sm">
         <h1 className="text-3xl md:text-4xl font-headline font-bold">
-          <span className="text-primary">Cine</span><span>Sage</span>
+          <span>CineSage</span>
         </h1>
         <div className="flex items-center gap-2">
           <Link href="/bookmarks" passHref>
@@ -49,13 +49,13 @@ export default function Home() {
       <footer className="text-center py-8 text-muted-foreground text-sm">
         <p>Powered by Gemini and The Movie Database (TMDB).</p>
         <p>CineSage &copy; {new Date().getFullYear()}</p>
-        <p>
+        <p className='pt-4'>
           Designed by{' '}
           <a
             href="https://github.com/hassaancode"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline hover:text-primary"
+            className="underline hover:text-white"
           >
             Hassaan
           </a>
