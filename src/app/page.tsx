@@ -49,6 +49,17 @@ export default function Home() {
       <footer className="text-center py-8 text-muted-foreground text-sm">
         <p>Powered by Gemini and The Movie Database (TMDB).</p>
         <p>CineSage &copy; {new Date().getFullYear()}</p>
+        <p>
+          Designed by{' '}
+          <a
+            href="https://github.com/hassaancode"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-primary"
+          >
+            Hassaan
+          </a>
+        </p>
       </footer>
     </div>
   )
