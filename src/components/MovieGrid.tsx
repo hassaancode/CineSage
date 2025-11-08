@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useEffect } from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { useMovieStore } from '@/store/movie-store'
 import { MovieCard } from '@/components/MovieCard'
@@ -16,10 +17,20 @@ import { FilterSortControls } from './FilterSortControls'
 
 function WelcomeMessage() {
     return (
-        <div className="text-center py-20 animate-in fade-in-0 duration-500">        
+        <div className="text-center py-20 animate-in fade-in-0 duration-500">
           <p className="text-muted-foreground max-w-md mx-auto">
               Tell us what you're in the mood for, and our AI will suggest the perfect movies and TV shows for your night in.
           </p>
+          <div className="mt-8 flex justify-center">
+            <Image
+              src="https://picsum.photos/seed/movies/600/400"
+              alt="Assortment of movie reels"
+              width={600}
+              height={400}
+              className="rounded-lg"
+              data-ai-hint="movie reel"
+            />
+          </div>
         </div>
     )
 }
