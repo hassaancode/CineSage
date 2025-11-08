@@ -23,12 +23,12 @@ function WelcomeMessage() {
           </p>
           <div className="mt-8 flex justify-center">
             <Image
-              src="https://picsum.photos/seed/movies/600/400"
+              src="/welcome-art.png"
               alt="Assortment of movie reels"
               width={600}
               height={400}
               className="rounded-lg"
-              data-ai-hint="movie reel"
+              data-ai-hint="movie collage abstract"
             />
           </div>
         </div>
