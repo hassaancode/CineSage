@@ -1,8 +1,7 @@
 # CineSage - Ai Movie Recommendation System
 Ai movie recommendation system build in nextjs using Gemini Api and TMDB api
 
-Preview: 🔗[cinesage-app.vercel.app](
-cinesage-app.vercel.app)
+Preview: 🔗[cinesage-app.vercel](https://cinesage-app.vercel.app/)
 
 ## Features
 1. Recommendations based on Scenario.
