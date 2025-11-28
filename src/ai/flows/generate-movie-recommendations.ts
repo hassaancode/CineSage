@@ -10,22 +10,24 @@
  * - GenerateMediaRecommendationsOutput - The return type for the generateMediaRecommendations function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const GenerateMediaRecommendationsInputSchema = z.object({
   userInput: z
     .string()
     .describe('The user input describing the type of movie or TV show they want to watch.'),
   exclude: z.array(z.string()).optional().describe('A list of movie or TV show titles to exclude from the recommendations.'),
+  likedMovies: z.array(z.string()).optional().describe('A list of movies or TV shows the user has liked/bookmarked, to be used for context.'),
 });
 export type GenerateMediaRecommendationsInput = z.infer<
   typeof GenerateMediaRecommendationsInputSchema
 >;
 
 const MediaRecommendationSchema = z.object({
-    title: z.string().describe("The title of the movie or TV show."),
-    type: z.enum(['movie', 'tv']).describe("The type of media, either 'movie' or 'tv'.")
+  title: z.string().describe("The title of the movie or TV show."),
+  type: z.enum(['movie', 'tv']).describe("The type of media, either 'movie' or 'tv'."),
+  reason: z.string().describe("A short, compelling reason why this movie/show is recommended, possibly referencing the user's liked movies.")
 });
 
 
@@ -46,11 +48,19 @@ export async function generateMediaRecommendations(
 
 const prompt = ai.definePrompt({
   name: 'generateMediaRecommendationsPrompt',
-  input: {schema: GenerateMediaRecommendationsInputSchema},
-  output: {schema: GenerateMediaRecommendationsOutputSchema},
-  prompt: `You are a movie and TV show expert. Based on the user input, recommend at least 10 movies or TV shows. For each, specify if it's a 'movie' or a 'tv' show.
-{{#if exclude}}
+  input: { schema: GenerateMediaRecommendationsInputSchema },
+  output: { schema: GenerateMediaRecommendationsOutputSchema },
+  prompt: `You are a movie and TV show expert. Based on the user input, recommend at least 10 movies or TV shows. For each, specify if it's a 'movie' or a 'tv' show, and provide a reason for the recommendation.
 
+{{#if likedMovies}}
+The user has liked the following movies/shows:
+{{#each likedMovies}}
+- {{{this}}}
+{{/each}}
+Use this information to infer their taste (e.g., preferred genres, tone, directors) and tailor your recommendations. Mention these connections in your reasons where relevant (e.g., "Since you liked Inception...").
+{{/if}}
+
+{{#if exclude}}
 Do not include any of the following titles in your new recommendations:
 {{#each exclude}}
 - {{{this}}}
@@ -59,7 +69,7 @@ Do not include any of the following titles in your new recommendations:
 
 User Input: {{{userInput}}}
 
-Ensure that your response is a JSON object with a 'mediaRecommendations' key, containing an array of objects. Each object must have 'title' and 'type' ('movie' or 'tv') properties.`,
+Ensure that your response is a JSON object with a 'mediaRecommendations' key, containing an array of objects. Each object must have 'title', 'type' ('movie' or 'tv'), and 'reason' properties.`,
 });
 
 const generateMediaRecommendationsFlow = ai.defineFlow(
@@ -69,7 +79,7 @@ const generateMediaRecommendationsFlow = ai.defineFlow(
     outputSchema: GenerateMediaRecommendationsOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const { output } = await prompt(input);
     return output!;
   }
 );

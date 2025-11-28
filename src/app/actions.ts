@@ -11,17 +11,17 @@ interface RecommendationResult {
 }
 
 async function processRecommendations(
-  mediaItems: { title: string; type: 'movie' | 'tv' }[],
+  mediaItems: { title: string; type: 'movie' | 'tv'; reason?: string }[],
   existingMediaIds: Set<number>
 ): Promise<Media[]> {
   if (!mediaItems || mediaItems.length === 0) {
     return []
   }
 
-  const mediaDetailsPromises = mediaItems.map(({ title, type }) =>
-    getMediaDetailsByTitle(title, type)
+  const mediaDetailsPromises = mediaItems.map(({ title, type, reason }) =>
+    getMediaDetailsByTitle(title, type).then(media => media ? { ...media, reason } : null)
   )
-  
+
   const mediaDetails = (await Promise.all(mediaDetailsPromises)).filter(
     (media): media is Media => media !== null
   )
@@ -53,7 +53,10 @@ export async function getAIRecommendations(
       ? `Find movies and TV shows similar to "${userInput}"`
       : userInput;
 
-    const recommendationsPromise = generateMediaRecommendations({ userInput: recommendationUserInput });
+    const recommendationsPromise = generateMediaRecommendations({
+      userInput: recommendationUserInput,
+      likedMovies: [] // No context on first search
+    });
 
     const [analysisResult, recommendationsResult] = await Promise.all([
       analysisPromise,
@@ -63,11 +66,11 @@ export async function getAIRecommendations(
     if (!recommendationsResult?.mediaRecommendations || recommendationsResult.mediaRecommendations.length === 0) {
       return { error: 'Could not generate movie recommendations. Try a different query.' }
     }
-    
+
     const uniqueMediaDetails = await processRecommendations(recommendationsResult.mediaRecommendations, new Set())
 
     if (uniqueMediaDetails.length === 0) {
-      return { error: "AI recommendations found, but couldn't find them on TMDB. Please try a more specific query."}
+      return { error: "AI recommendations found, but couldn't find them on TMDB. Please try a more specific query." }
     }
 
     return {
@@ -95,12 +98,16 @@ export async function getMoreAIRecommendations(
   try {
     const existingMediaTitles = existingMedia.map(m => m.title)
     const existingMediaIds = new Set(existingMedia.map(m => m.id))
-    
+
     const recommendationUserInput = searchMode === 'movie'
       ? `Find movies and TV shows similar to "${userInput}"`
       : userInput;
 
-    const recommendationsResult = await generateMediaRecommendations({ userInput: recommendationUserInput, exclude: existingMediaTitles })
+    const recommendationsResult = await generateMediaRecommendations({
+      userInput: recommendationUserInput,
+      exclude: existingMediaTitles,
+      likedMovies: existingMediaTitles // Use existing recommendations as context
+    })
 
     if (!recommendationsResult?.mediaRecommendations || recommendationsResult.mediaRecommendations.length === 0) {
       return { data: { media: [] } }

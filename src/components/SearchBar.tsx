@@ -22,10 +22,11 @@ export function SearchBar() {
   const { toast } = useToast()
   const searchContainerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const isSearchingRef = useRef(false)
 
-  const { 
+  const {
     setRecommendations,
-    setLoading, 
+    setLoading,
     setError,
     autocomplete,
     setAutocomplete,
@@ -33,7 +34,8 @@ export function SearchBar() {
   } = useMovieStore()
 
   useEffect(() => {
-    if (debouncedQuery.length > 1 && searchMode === 'movie') {
+    // Don't show autocomplete if we're currently searching or just finished
+    if (debouncedQuery.length > 1 && searchMode === 'movie' && !isSearchingRef.current) {
       startTransition(async () => {
         const { data } = await getAutocompleteSuggestions(debouncedQuery)
         setAutocomplete(data || [])
@@ -44,26 +46,28 @@ export function SearchBar() {
   }, [debouncedQuery, searchMode, setAutocomplete])
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
         setAutocomplete([])
       }
     }
 
     if (autocomplete.length > 0) {
+      // Use both mouse and touch events for better mobile support
       document.addEventListener('mousedown', handleClickOutside)
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside)
+      document.addEventListener('touchstart', handleClickOutside)
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
     }
   }, [autocomplete, setAutocomplete])
 
   const handleSearch = async (searchQuery: string) => {
     if (!searchQuery.trim()) return;
 
+    isSearchingRef.current = true
     inputRef.current?.blur()
     setLoading(true)
     setError(null)
@@ -83,13 +87,18 @@ export function SearchBar() {
       })
     } else if (data) {
       setRecommendations({
-        media: data.media, 
+        media: data.media,
         userInput: searchQuery,
         searchMode: searchMode,
         analysis: data.analysis ?? null
       })
     }
     setLoading(false)
+
+    // Keep the flag set for a bit to prevent autocomplete from reappearing
+    setTimeout(() => {
+      isSearchingRef.current = false
+    }, 500)
   }
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -98,10 +107,14 @@ export function SearchBar() {
   }
 
   const handleSuggestionClick = (media: Media) => {
+    // Clear autocomplete immediately
+    setAutocomplete([])
     setQuery(media.title)
     setSearchMode('movie')
-    setAutocomplete([])
-    handleSearch(media.title)
+    // Small delay to ensure autocomplete is cleared before search
+    setTimeout(() => {
+      handleSearch(media.title)
+    }, 0)
   }
 
   return (
@@ -111,11 +124,11 @@ export function SearchBar() {
           ✨ Describe
         </Label>
         <Switch
-        className='hidden'
+          className='hidden'
           id="search-mode"
           checked={searchMode === 'movie'}
           onCheckedChange={(checked) => {
-          setSearchMode(checked ? 'movie' : 'scenario')
+            setSearchMode(checked ? 'movie' : 'scenario')
           }}
         />
         <Label htmlFor="search-mode" className={`cursor-pointer rounded-full p-3  ${searchMode === 'movie' ? ' bg-active' : 'hover:bg-muted-foreground/10'}`}>
@@ -136,11 +149,15 @@ export function SearchBar() {
             className="w-full pl-12 pr-28 sm:pr-32 py-6 text-sm rounded-full shadow-lg "
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => { if (query.length > 1 && searchMode === 'movie') { startTransition(async () => { const { data } = await getAutocompleteSuggestions(query); setAutocomplete(data || []) })}}}
+            onFocus={() => { if (query.length > 1 && searchMode === 'movie') { startTransition(async () => { const { data } = await getAutocompleteSuggestions(query); setAutocomplete(data || []) }) } }}
+            onBlur={() => {
+              // Delay to allow click events to fire first
+              setTimeout(() => setAutocomplete([]), 200)
+            }}
           />
-          <Button 
-            type="submit" 
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 px-4 sm:px-5 font-bold bg-accent hover:bg-accent/90" 
+          <Button
+            type="submit"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 px-4 sm:px-5 font-bold bg-accent hover:bg-accent/90"
             disabled={loading || !query.trim()}
           >
             {loading ? (
@@ -159,11 +176,13 @@ export function SearchBar() {
               {autocomplete.map((media) => (
                 <li key={media.id}>
                   <button
+                    type="button"
                     onMouseDown={(e) => e.preventDefault()}
+                    onTouchStart={(e) => e.preventDefault()}
                     onClick={() => handleSuggestionClick(media)}
-                    className="w-full text-left p-2 rounded-md hover:bg-muted-foreground/10 flex items-center gap-4"
+                    className="w-full text-left p-2 rounded-md hover:bg-muted-foreground/10 flex items-center gap-4 active:bg-muted-foreground/20"
                   >
-                    <Image 
+                    <Image
                       src={media.poster_path ? `https://image.tmdb.org/t/p/w92${media.poster_path}` : 'https://placehold.co/45x68'}
                       alt={media.title}
                       width={40}

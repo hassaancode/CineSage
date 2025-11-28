@@ -8,10 +8,11 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Bookmark } from 'lucide-react'
+import { AuthButton } from '@/components/AuthButton'
 
 export default function Home() {
   const theme = useThemeStore((state) => state.theme)
-  
+
   useEffect(() => {
     document.documentElement.className = ''
     document.documentElement.classList.add(theme)
@@ -30,6 +31,7 @@ export default function Home() {
             </Button>
           </Link>
           <ThemeToggle />
+          <AuthButton />
         </div>
       </header>
       <main className="flex-grow">
