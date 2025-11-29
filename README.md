@@ -15,9 +15,9 @@ Ai movie recommendation system build in nextjs using Gemini Api and TMDB api
 6. Type Filter (Moive / TV).
 7. Sorting Based on (Relase date / Popular / IMDB rating).
 8. Movie dialog card with metadata
-9. Movie Trailer embbed in movie dialog
-10. Cast Tab in movie dialog
-11. Reviews Tab in movie dialog
+    - Movie Trailer embbed in movie dialog
+    - Cast Tab in movie dialog
+    - Reviews Tab in movie dialog
 
 ## Api's Used
 Gemini api  
