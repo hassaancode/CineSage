@@ -40,24 +40,58 @@ interface TmdbSearchResponse {
   results: (TmdbMedia | TmdbPerson)[];
 }
 
+export interface CastMember {
+  id: number;
+  name: string;
+  character: string;
+  profile_path: string | null;
+}
+
+export interface CrewMember {
+  id: number;
+  name: string;
+  job: string;
+  department: string;
+  profile_path: string | null;
+}
+
+export interface Review {
+  id: string;
+  author: string;
+  content: string;
+  created_at: string;
+  url: string;
+}
+
+interface CreditsResponse {
+  id: number;
+  cast: CastMember[];
+  crew: CrewMember[];
+}
+
+interface ReviewsResponse {
+  id: number;
+  results: Review[];
+}
+
 function normalizeMedia(item: TmdbMedia): Media {
-    if (item.media_type === 'movie') {
-        const movie = item as TmdbMovie;
-        return { 
-            ...movie, 
-            title: movie.title, 
-            release_date: movie.release_date || '',
-            media_type: 'movie',
-        };
-    } else { // tv
-        const tv = item as TmdbTv;
-        return { 
-            ...tv, 
-            title: tv.name, 
-            release_date: tv.first_air_date || '',
-            media_type: 'tv',
-        };
-    }
+  if (item.media_type === 'movie') {
+    const movie = item as TmdbMovie;
+    return {
+      ...movie,
+      title: movie.title,
+      release_date: movie.release_date || '',
+      media_type: 'movie',
+    };
+  } else { // tv
+    const tv = item as TmdbTv;
+    return {
+      ...tv,
+      title: tv.name,
+      release_date: tv.first_air_date || '',
+      media_type: 'tv',
+    };
+  }
 }
 
 export async function searchMedia(query: string, type?: 'movie' | 'tv'): Promise<Media[]> {
@@ -78,9 +112,9 @@ export async function searchMedia(query: string, type?: 'movie' | 'tv'): Promise
       console.error('Failed to fetch from TMDB:', response.statusText);
       return [];
     }
-  
+
     const data: TmdbSearchResponse = await response.json();
-    
+
     const mediaResults = data.results
       .filter((item): item is TmdbMedia => {
         // For multi-search, filter out persons. For single-type search, include everything.
@@ -127,6 +161,36 @@ export async function getMediaVideos(mediaId: number, mediaType: 'movie' | 'tv')
   }
 }
 
+export async function getMediaCredits(mediaId: number, mediaType: 'movie' | 'tv'): Promise<{ cast: CastMember[], crew: CrewMember[] }> {
+  if (!TMDB_API_KEY) return { cast: [], crew: [] };
+
+  const url = `${TMDB_BASE_URL}/${mediaType}/${mediaId}/credits?api_key=${TMDB_API_KEY}&language=en-US`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return { cast: [], crew: [] };
+    const data: CreditsResponse = await response.json();
+    return { cast: data.cast, crew: data.crew };
+  } catch (error) {
+    console.error(`Error fetching ${mediaType} credits:`, error);
+    return { cast: [], crew: [] };
+  }
+}
+
+export async function getMediaReviews(mediaId: number, mediaType: 'movie' | 'tv'): Promise<Review[]> {
+  if (!TMDB_API_KEY) return [];
+
+  const url = `${TMDB_BASE_URL}/${mediaType}/${mediaId}/reviews?api_key=${TMDB_API_KEY}&language=en-US&page=1`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return [];
+    const data: ReviewsResponse = await response.json();
+    return data.results;
+  } catch (error) {
+    console.error(`Error fetching ${mediaType} reviews:`, error);
+    return [];
+  }
+}
+
 interface Genre {
   id: number;
   name: string;
@@ -158,20 +222,20 @@ export async function getGenreMap(): Promise<Map<number, string>> {
       console.error('Failed to fetch genres from TMDB');
       return new Map();
     }
-    
+
     const movieGenresData: GenresResponse = await movieGenresResponse.json();
     const tvGenresData: GenresResponse = await tvGenresResponse.json();
-    
+
     const genreMap = new Map<number, string>();
-    
+
     movieGenresData.genres.forEach(genre => {
       genreMap.set(genre.id, genre.name);
     });
 
     tvGenresData.genres.forEach(genre => {
-        if (!genreMap.has(genre.id)) {
-            genreMap.set(genre.id, genre.name);
-        }
+      if (!genreMap.has(genre.id)) {
+        genreMap.set(genre.id, genre.name);
+      }
     });
 
     genreMapCache = genreMap;

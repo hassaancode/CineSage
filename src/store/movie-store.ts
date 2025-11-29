@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { Media, AnalyzedUserInput } from '@/types'
+import { auth, db } from '@/lib/firebase'
+import { doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
 
 type SortByType = 'popularity' | 'vote_average' | 'release_date' | 'default';
 type MediaTypeFilter = 'all' | 'movie' | 'tv';
@@ -35,7 +37,9 @@ type MovieState = {
   toggleGenreFilter: (genreId: number) => void
   setGenreMap: (genreMap: Map<number, string>) => void
   setMediaTypeFilter: (filter: MediaTypeFilter) => void
-  toggleBookmark: (media: Media) => void
+  toggleBookmark: (media: Media) => Promise<void>
+  setBookmarks: (bookmarks: Media[]) => void
+  syncBookmarks: (userId: string) => Promise<void>
   clearFilters: () => void
   clearState: () => void
 }
@@ -61,17 +65,17 @@ export const useMovieStore = create<MovieState>()(
   persist(
     (set, get) => ({
       ...initialState,
-      setRecommendations: (payload) => set({ 
-        recommendations: payload.media, 
+      setRecommendations: (payload) => set({
+        recommendations: payload.media,
         userInput: payload.userInput,
         searchMode: payload.searchMode,
         analysis: payload.analysis,
-        activeGenreFilters: [], 
+        activeGenreFilters: [],
         sortBy: 'default',
         mediaTypeFilter: 'all',
       }),
-      appendRecommendations: (media) => set((state) => ({ 
-        recommendations: [...state.recommendations, ...media] 
+      appendRecommendations: (media) => set((state) => ({
+        recommendations: [...state.recommendations, ...media]
       })),
       setAutocomplete: (media) => set({ autocomplete: media }),
       setLoading: (loading) => set({ loading }),
@@ -89,13 +93,63 @@ export const useMovieStore = create<MovieState>()(
       }),
       setGenreMap: (genreMap) => set({ genreMap }),
       setMediaTypeFilter: (filter) => set({ mediaTypeFilter: filter }),
-      toggleBookmark: (media) => {
+      toggleBookmark: async (media) => {
         const bookmarks = get().bookmarks;
         const isBookmarked = bookmarks.some((b) => b.id === media.id);
+        let newBookmarks = [];
+
         if (isBookmarked) {
-          set({ bookmarks: bookmarks.filter((b) => b.id !== media.id) });
+          newBookmarks = bookmarks.filter((b) => b.id !== media.id);
         } else {
-          set({ bookmarks: [...bookmarks, media] });
+          newBookmarks = [...bookmarks, media];
+        }
+
+        set({ bookmarks: newBookmarks });
+
+        const user = auth.currentUser;
+        if (user) {
+          const userRef = doc(db, 'users', user.uid);
+          try {
+            if (isBookmarked) {
+              await updateDoc(userRef, {
+                bookmarks: arrayRemove(media)
+              });
+            } else {
+              // Check if doc exists first, if not create it
+              const docSnap = await getDoc(userRef);
+              if (!docSnap.exists()) {
+                await setDoc(userRef, { bookmarks: [media] });
+              } else {
+                await updateDoc(userRef, {
+                  bookmarks: arrayUnion(media)
+                });
+              }
+            }
+          } catch (error) {
+            console.error("Error syncing bookmark:", error);
+          }
+        }
+      },
+      setBookmarks: (bookmarks) => set({ bookmarks }),
+      syncBookmarks: async (userId) => {
+        if (!userId) return;
+        const userRef = doc(db, 'users', userId);
+        try {
+          const docSnap = await getDoc(userRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data.bookmarks) {
+              // Merge cloud bookmarks with local? Or overwrite? 
+              // Let's merge for now, or just prefer cloud.
+              // For simplicity, let's use cloud as truth if it exists.
+              set({ bookmarks: data.bookmarks as Media[] });
+            }
+          } else {
+            // If no cloud data, maybe upload local?
+            // For now, do nothing or create empty.
+          }
+        } catch (error) {
+          console.error("Error syncing bookmarks from cloud:", error);
         }
       },
       clearFilters: () => set({ activeGenreFilters: [] }),

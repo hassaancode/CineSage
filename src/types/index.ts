@@ -8,6 +8,7 @@ export interface Media {
   popularity: number;
   genre_ids: number[];
   media_type: 'movie' | 'tv';
+  reason?: string; // AI-generated reason for recommendation
 }
 
 export interface AnalyzedUserInput {

@@ -12,6 +12,7 @@ import { useMovieStore } from '@/store/movie-store'
 import { cn } from '@/lib/utils'
 import { Button } from './ui/button'
 import { useToast } from '@/hooks/use-toast'
+import { Sparkles } from 'lucide-react'
 
 const getImageUrl = (path: string | null) => {
   return path ? `https://image.tmdb.org/t/p/w500${path}` : 'https://placehold.co/500x750'
@@ -58,17 +59,17 @@ export function MovieCard({ movie: media }: { movie: Media }) {
               <Badge variant={media.media_type === 'movie' ? 'default' : 'secondary'} className="absolute top-2 right-2 z-10">
                 {media.media_type === 'movie' ? 'Movie' : 'TV'}
               </Badge>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className={cn(
                   "absolute top-2 left-2 z-10 h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/75 hover:text-white",
                   isBookmarked && "text-white"
-                )} 
+                )}
                 onClick={handleBookmarkClick}
                 aria-label="Bookmark movie"
               >
-                  <Bookmark className={cn("h-5 w-5", isBookmarked && "fill-current")} />
+                <Bookmark className={cn("h-5 w-5", isBookmarked && "fill-current")} />
               </Button>
               <Image
                 src={getImageUrl(media.poster_path)}
@@ -87,6 +88,12 @@ export function MovieCard({ movie: media }: { movie: Media }) {
               <span>{media.vote_average > 0 ? media.vote_average.toFixed(1) : 'N/A'}</span>
               {media.release_date && <span className="ml-auto">{new Date(media.release_date).getFullYear()}</span>}
             </div>
+            {media.reason && (
+              <div className="flex items-start gap-2 p-2 rounded-md bg-primary/10 border border-primary/20">
+                <Sparkles className="w-4 h-4 mt-0.5 text-primary flex-shrink-0" />
+                <p className="text-xs text-foreground/80 line-clamp-2">{media.reason}</p>
+              </div>
+            )}
             <CardDescription className="line-clamp-3 text-sm text-muted-foreground">{media.overview}</CardDescription>
           </CardContent>
         </Card>
