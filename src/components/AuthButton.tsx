@@ -14,11 +14,13 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useMovieStore } from '@/store/movie-store'
 import { useEffect } from 'react'
+import { useToast } from '@/hooks/use-toast'
 
 export function AuthButton() {
     const { user, signInWithGoogle, signOut } = useAuth()
     const syncBookmarks = useMovieStore((state) => state.syncBookmarks)
     const clearState = useMovieStore((state) => state.clearState)
+    const { toast } = useToast()
 
     useEffect(() => {
         if (user) {
@@ -26,18 +28,33 @@ export function AuthButton() {
         }
     }, [user, syncBookmarks])
 
+    const handleSignIn = async () => {
+        try {
+            await signInWithGoogle()
+            toast({
+                title: "Signed in",
+                description: "Welcome back!",
+            })
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Error signing in",
+                description: "Please try again.",
+            })
+        }
+    }
+
     const handleSignOut = async () => {
         await signOut()
-        // Optional: clear bookmarks on sign out or keep them?
-        // clearState() // Maybe too aggressive if we want to keep local state?
-        // Let's just keep them for now or maybe clear bookmarks only?
-        // For now, standard behavior is often to keep local data or clear it.
-        // Let's leave it as is.
+        toast({
+            title: "Signed out",
+            description: "See you next time!",
+        })
     }
 
     if (!user) {
         return (
-            <Button onClick={signInWithGoogle} variant="outline" size="sm" className="gap-2">
+            <Button onClick={handleSignIn} variant="outline" size="sm" className="gap-2">
                 <LogIn className="h-4 w-4" />
                 <span className="hidden sm:inline">Sign In</span>
             </Button>
