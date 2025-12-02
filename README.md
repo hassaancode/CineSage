@@ -6,12 +6,18 @@ Ai movie recommendation system build in nextjs using Gemini Api and TMDB api
 > Preview: 🔗[cinesage-app.vercel](https://cinesage-app.vercel.app/)
 
 ## Features
-1. Recommendations based on Scenario.
-2. Recommendations based on Movies.
-3. Genre Filters.
-4. Type Filter (Moive / TV).
-5. Sorting Based on (Relase date / Popular / IMDB rating).
-6. Trailer for every movie dialog card.
+
+1. Google Authentication
+2. Recommendations based on Scenario.
+3. Recommendations based on Movies.
+4. Bookmark Movies/Tv
+5. Genre Filters.
+6. Type Filter (Moive / TV).
+7. Sorting Based on (Relase date / Popular / IMDB rating).
+8. Movie dialog card with metadata
+    - Movie Trailer embbed in movie dialog
+    - Cast Tab in movie dialog
+    - Reviews Tab in movie dialog
 
 ## Api's Used
 Gemini api  
@@ -22,7 +28,7 @@ TMDB api
 Before running this project, make sure you have the following installed on your machine:
 
 - Node.js (https://nodejs.org)
-
+- Git (https://git-scm.com/install/windows)
 
 # Getting Started
 
@@ -56,7 +62,7 @@ Before running this project, make sure you have the following installed on your 
     bun dev
     ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:xxxx) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
